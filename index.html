@@ -389,7 +389,7 @@ function reseed(){
    Set FASIT_API to the deployed Worker URL (see worker/README.md).
    While empty, the app behaves exactly as before (local-only).
    ============================================================ */
-const FASIT_API = '';   // e.g. 'https://bettingcomp-fasit.<subdomain>.workers.dev'
+const FASIT_API = 'https://bettingcomp-fasit.hmaicusdev.workers.dev';
 const fasitUrl = (path)=> FASIT_API.replace(/\/$/,'') + path;
 
 function applyFasit(data){

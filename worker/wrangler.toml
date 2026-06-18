@@ -5,7 +5,7 @@ compatibility_date = "2026-06-18"
 # Created by `wrangler kv namespace create FASIT` — paste the printed id below.
 [[kv_namespaces]]
 binding = "FASIT"
-id = "PUT_KV_NAMESPACE_ID_HERE"
+id = "44ee91bdc9f24f94ad77b81aac9a8b55"
 
 # ADMIN_PASSWORD is set as a secret, NOT here:
 #   wrangler secret put ADMIN_PASSWORD
