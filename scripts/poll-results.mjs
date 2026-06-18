@@ -57,7 +57,7 @@ async function loadDotEnv() {
 // disambiguates the fixture: IRN+IRQ both -> "Ira", and AUS (Australia) +
 // AUT (Austria) both -> "Aus".
 const TLA_TO_CODE = {
-  ALG: 'Alg', ARG: 'Arg', AUS: 'Aus', AUT: 'Aus', BEL: 'Bel', BIH: 'Bos', BRA: 'Bra',
+  ALG: 'Alg', ARG: 'Arg', AUS: 'Aus', AUT: 'Aut', BEL: 'Bel', BIH: 'Bos', BRA: 'Bra',
   CAN: 'Can', CIV: 'Cot', COD: 'DR', COL: 'Col', CPV: 'Cab', CRO: 'Cro',
   CUW: 'Cur', CZE: 'Cze', ECU: 'Ecu', EGY: 'Egy', ENG: 'Eng', ESP: 'Spa',
   FRA: 'Fra', GER: 'Ger', GHA: 'Gha', HAI: 'Hai', IRN: 'Ira', IRQ: 'Ira',
@@ -90,8 +90,28 @@ async function writeState(state) {
   await writeFile(CFG.stateFile, JSON.stringify(state, null, 2));
 }
 
-async function fetchFinished() {
-  const url = `https://api.football-data.org/v4/competitions/${encodeURIComponent(CFG.comp)}/matches?status=FINISHED`;
+const KO_STAGES = ['LAST_32', 'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'THIRD_PLACE', 'FINAL'];
+
+function toKnockout(m) {
+  return {
+    fdId: m.id,
+    stage: m.stage,
+    date: m.utcDate,
+    home: TLA_TO_CODE[m.homeTeam?.tla] ?? null,
+    away: TLA_TO_CODE[m.awayTeam?.tla] ?? null,
+    homeName: m.homeTeam?.name ?? null,
+    awayName: m.awayTeam?.name ?? null,
+    homeTla: m.homeTeam?.tla ?? null,
+    awayTla: m.awayTeam?.tla ?? null,
+    ah: m.score?.fullTime?.home ?? null,
+    aa: m.score?.fullTime?.away ?? null,
+    duration: m.score?.duration ?? null,
+    finished: m.status === 'FINISHED',
+  };
+}
+
+async function fetchAll() {
+  const url = `https://api.football-data.org/v4/competitions/${encodeURIComponent(CFG.comp)}/matches`;
   const res = await fetch(url, { headers: { 'X-Auth-Token': CFG.token } });
   if (res.status === 429) {
     const wait = parseInt(res.headers.get('Retry-After') || '60', 10);
@@ -151,8 +171,18 @@ function runHook(r) {
 }
 
 async function pollOnce() {
-  const matches = await fetchFinished();
-  const results = matches.map(toResult).filter(Boolean);
+  const matches = await fetchAll();
+  // Group-stage finished results (matched in the app by team code).
+  const results = matches
+    .filter((m) => m.stage === 'GROUP_STAGE' && m.status === 'FINISHED')
+    .map(toResult).filter(Boolean);
+  // All 32 knockout slots (matched in the app by football-data id). Teams stay
+  // null until the bracket resolves; sorted by stage then date for stable output.
+  const knockout = matches
+    .filter((m) => KO_STAGES.includes(m.stage))
+    .sort((a, b) => KO_STAGES.indexOf(a.stage) - KO_STAGES.indexOf(b.stage) ||
+                    new Date(a.utcDate) - new Date(b.utcDate))
+    .map(toKnockout);
 
   const state = await readState();
   const seen = new Set(state.seen);
@@ -171,14 +201,25 @@ async function pollOnce() {
     if (!r.homeCode) log(`  WARN unmapped team tla "${r.homeTla}" (${r.homeName})`);
     if (!r.awayCode) log(`  WARN unmapped team tla "${r.awayTla}" (${r.awayName})`);
   }
+  for (const k of knockout) {
+    if (k.homeTla && !k.home) log(`  WARN unmapped KO team tla "${k.homeTla}" (${k.homeName})`);
+    if (k.awayTla && !k.away) log(`  WARN unmapped KO team tla "${k.awayTla}" (${k.awayName})`);
+    if (k.finished && k.duration !== 'REGULAR') {
+      log(`  NOTE ${k.stage} ${k.homeName}-${k.awayName} decided in ${k.duration} — 90-min score must be entered manually`);
+    }
+  }
 
-  // Only rewrite results.json when the actual results change (not just the
+  // Only rewrite results.json when the actual data changes (not just the
   // timestamp) so the Actions cron commits/redeploys only on real changes.
-  const resultsJson = JSON.stringify(results);
+  const payload = { results, knockout };
+  const dataJson = JSON.stringify(payload);
   let prevJson = null;
-  try { prevJson = JSON.stringify(JSON.parse(await readFile(CFG.outFile, 'utf8')).results); } catch {}
+  try {
+    const prev = JSON.parse(await readFile(CFG.outFile, 'utf8'));
+    prevJson = JSON.stringify({ results: prev.results || [], knockout: prev.knockout || [] });
+  } catch {}
 
-  if (resultsJson !== prevJson) {
+  if (dataJson !== prevJson) {
     await writeFile(
       CFG.outFile,
       JSON.stringify({
@@ -186,11 +227,12 @@ async function pollOnce() {
         updatedAt: new Date().toISOString(),
         count: results.length,
         results,
+        knockout,
       }, null, 2),
     );
-    log(`polled: ${results.length} finished, ${fresh.length} new -> wrote ${CFG.outFile}`);
+    log(`polled: ${results.length} group finished, ${knockout.length} KO slots, ${fresh.length} new -> wrote ${CFG.outFile}`);
   } else {
-    log(`polled: ${results.length} finished, no changes -> ${CFG.outFile} unchanged`);
+    log(`polled: ${results.length} group finished, ${knockout.length} KO slots, no changes -> ${CFG.outFile} unchanged`);
   }
 
   state.seen = [...seen];
