@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-18T15:55:04.355Z",
-  "count": 24,
+  "updatedAt": "2026-06-18T20:08:37.119Z",
+  "count": 25,
   "results": [
     {
       "matchId": 537327,
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URY",
+      "awayTla": "URU",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -338,6 +338,20 @@
       "awayCode": "Col",
       "home": 1,
       "away": 3
+    },
+    {
+      "matchId": 537329,
+      "utcDate": "2026-06-18T16:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Czechia",
+      "awayName": "South Africa",
+      "homeTla": "CZE",
+      "awayTla": "RSA",
+      "homeCode": "Cze",
+      "awayCode": "Sou",
+      "home": 1,
+      "away": 1
     }
   ]
 }
