@@ -281,6 +281,23 @@ const STRUCTURAL = [
 ];
 const STORAGE_KEY = 'wc2026_predictor_v1';
 
+/* Nickname -> real name (from the latest manual update). Seeds STATE.realNames;
+   the admin can edit these in the Spillere tab and the change is shared via fasit. */
+const REAL_NAMES = {
+  "Mario":"Mario Miron","Yunus":"Yunus Yildiz","Usman":"Usman Riaz",
+  "Rene":"René Gnúpr Jenssen","Zulu Napa":"Zulu Napa","Wallmo":"Kristofer Wallmo",
+  "Jahn Oscar":"Jahn Oscar Staff","Tommy":"Tommy Almåsbakk","Nabeel":"Nabeel Ejaz",
+  "Mikael":"Mikael Grattum Zalahas","Tore":"Tore Strømsholm","Fredrik L":"Fredrik Lindén",
+  "Ludvik":"Ludvik Staff","Tim":"Tim von Reis","Haakon":"Haakon Bergo",
+  "Kine":"Kine Ekstrøm Gundersen","Grenadinho":"Freddie Grenadino","Emilie":"Emilie Hansen",
+  "Niclas":"Niclas Svensén","Hans T":"Hans T","Larsa":"Larsa Statham","Emma":"Emma Modén",
+  "André":"André Ullern","Natalie":"Natalie Tildefors","Tormod":"Tormod Kristoffersen",
+  "Charlie":"Charlie Ghandi Duratovic","Ole Fredrik":"Ole Fredrik Wollan",
+  "Håkon":"Håkon Maicus Solheim","Leo":"Leo Brattström","Percy":"Percy Mattias Malmqvist",
+  "Patrick":"Patrick Lillelien","Joel":"Joel Dunder","Steve":"Steve Dimovski",
+  "Christer":"Christer Bådsvik","Tor":""
+};
+
 /* ============================================================
    STATE
    ============================================================ */
@@ -291,6 +308,7 @@ function freshState(){
     version:1,
     adminPassword:'admin',
     apiToken:'',
+    realNames:{...REAL_NAMES},
     rules:JSON.parse(JSON.stringify(DEFAULT_RULES)),
     structuralValues:Object.fromEntries(STRUCTURAL.map(s=>[s[0],s[2]])),
     participants:SEED.participants.slice(),
@@ -381,6 +399,9 @@ function reseed(){
     return { id:sb.id, text:sb.text, points:sb.points, type:sb.type,
              answers:sb.answers, correct: ex.correct || '', overrides: ex.overrides || {} };
   });
+  // ensure every participant has a real-name entry (preserve any existing edits)
+  if(!STATE.realNames) STATE.realNames={};
+  for(const p of STATE.participants){ if(STATE.realNames[p]==null) STATE.realNames[p]=REAL_NAMES[p]||''; }
   saveState();
 }
 
@@ -405,6 +426,7 @@ function applyFasit(data){
   if(data.rules){ for(const k in data.rules) STATE.rules[k]={...STATE.rules[k],...data.rules[k]}; n++; }
   if(data.structuralValues){ STATE.structuralValues={...STATE.structuralValues,...data.structuralValues}; n++; }
   if(data.phases){ for(const m of STATE.matches){ if(data.phases[m.id]) m.phase=data.phases[m.id]; } n++; }
+  if(data.realNames){ STATE.realNames={...STATE.realNames,...data.realNames}; n++; }
   if(n) saveState();
   return n;
 }
@@ -414,7 +436,7 @@ function buildFasit(){
   const phases={};
   for(const m of STATE.matches){ if(m.phase && m.phase!=='group') phases[m.id]=m.phase; }
   return { bonus, adjustments:STATE.adjustments, rules:STATE.rules,
-           structuralValues:STATE.structuralValues, phases };
+           structuralValues:STATE.structuralValues, phases, realNames:STATE.realNames };
 }
 async function loadFasit(){
   if(!FASIT_API) return 0;
@@ -529,6 +551,7 @@ function ranked(){
    HELPERS
    ============================================================ */
 function teamName(code){ return TEAMS[code]||code; }
+function displayName(nick){ const r=(STATE.realNames||{})[nick]; return (r && r.trim()) ? r : nick; }
 function matchTitle(m){ return `${teamName(m.home)} – ${teamName(m.away)}`; }
 function fmt(n){ return (n||0).toLocaleString('nb-NO'); }
 function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
@@ -581,7 +604,8 @@ const App={
         <div class="lb-row ${r.rank===1?'leader':''}" onclick="App.openPlayer('${esc(r.player).replace(/'/g,"\\'")}')">
           <div class="rank-badge ${rb}">${r.rank}</div>
           <div style="min-width:0">
-            <div class="font-display" style="font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.player)}</div>
+            <div class="font-display" style="font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(displayName(r.player))}</div>
+            ${displayName(r.player)!==r.player?`<div style="font-size:11px;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.player)}</div>`:''}
             <div class="mono" style="font-size:11px;color:var(--muted);margin-top:3px">
               <span class="tier-exact">${r.exact}E</span> ·
               <span class="tier-gd">${r.gd}M</span> ·
@@ -602,7 +626,7 @@ const App={
       pod.appendChild(el(`
         <div style="text-align:center;min-width:62px">
           <div class="rank-badge rank-${i+1}" style="margin:0 auto 6px;width:44px;height:44px;font-size:18px">${i+1}</div>
-          <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px">${esc(r.player)}</div>
+          <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px">${esc(displayName(r.player))}</div>
           <div class="pts-pill" style="font-size:13px;color:var(--gold)">${fmt(r.total)}</div>
         </div>`));
     });
@@ -653,7 +677,8 @@ const App={
       <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border)">
         <div>
           <div class="eyebrow">Spillerkort</div>
-          <h2 class="font-display" style="font-weight:800;font-size:24px;line-height:1.1;margin-top:3px">${esc(player)}</h2>
+          <h2 class="font-display" style="font-weight:800;font-size:24px;line-height:1.1;margin-top:3px">${esc(displayName(player))}</h2>
+          ${displayName(player)!==player?`<div style="font-size:12px;color:var(--muted-2);margin-top:2px">${esc(player)}</div>`:''}
         </div>
         <button class="btn btn-ghost" style="padding:8px 10px" onclick="App.closeModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
       </div>
@@ -788,7 +813,7 @@ const App={
     }
   },
   renderAdmin(section='matches'){
-    const tabs=[['matches','Kamper'],['bonus','Bonus'],['rules','Poeng'],['structural','Justeringer'],['sync','Sync'],['data','Data']];
+    const tabs=[['matches','Kamper'],['bonus','Bonus'],['players','Spillere'],['rules','Poeng'],['structural','Justeringer'],['sync','Sync'],['data','Data']];
     this.modal(`
       <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border)">
         <div class="flex items-center gap-2"><i data-lucide="shield-check" style="width:20px;height:20px;color:var(--gold)"></i>
@@ -804,6 +829,7 @@ const App={
     const body=document.getElementById('admBody');
     if(section==='matches') body.innerHTML=this.admMatches();
     if(section==='bonus') body.innerHTML=this.admBonus();
+    if(section==='players') body.innerHTML=this.admPlayers();
     if(section==='rules') body.innerHTML=this.admRules();
     if(section==='structural') body.innerHTML=this.admStructural();
     if(section==='sync') body.innerHTML=this.admSync();
@@ -851,6 +877,20 @@ const App={
       <div class="space-y-3">${rows}</div>`;
   },
   setBonusCorrect(id,v){ STATE.bonus.find(b=>b.id===id).correct=v.trim(); saveFasit(); this.renderAll(); },
+
+  admPlayers(){
+    const rows=STATE.participants.map(p=>{
+      const rn=(STATE.realNames||{})[p]||'';
+      const pj=esc(p).replace(/'/g,"\\'");
+      return `<div class="flex items-center gap-3" style="padding:8px 0;border-bottom:1px solid var(--border-soft)">
+        <div style="min-width:92px"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p)}</div><div class="eyebrow">kallenavn</div></div>
+        <input class="inp" style="flex:1" value="${esc(rn)}" placeholder="Fullt navn…" onchange="App.setRealName('${pj}',this.value)">
+      </div>`;
+    }).join('');
+    return `<p style="font-size:13px;color:var(--muted);margin-bottom:14px">Kallenavnet er fast (det kobler spilleren til tipsene). Rediger det fulle navnet — det vises i tabellen for alle.</p>
+      <div>${rows}</div>`;
+  },
+  setRealName(nick,v){ if(!STATE.realNames) STATE.realNames={}; STATE.realNames[nick]=v.trim(); saveFasit(); this.renderAll(); },
   openBonusOverride(id){
     const b=STATE.bonus.find(x=>x.id===id);
     const rows=STATE.participants.filter(p=>b.answers[p]).map(p=>{
