@@ -359,6 +359,84 @@ async function loadResults(){
 }
 
 /* ============================================================
+   SEED RE-APPLY — predictions, fixtures and bonus questions are
+   "given" data baked into SEED. localStorage caches a copy from
+   the first visit; this re-applies SEED on every load so edits to
+   the source (e.g. standardized names) always reach every browser.
+   Mutable settlement (results, bonus fasit) is preserved.
+   ============================================================ */
+function reseed(){
+  STATE.participants = SEED.participants.slice();
+  STATE.predictions = JSON.parse(JSON.stringify(SEED.predictions));
+  const prevM = Object.fromEntries(STATE.matches.map(m=>[m.id,m]));
+  STATE.matches = SEED.matches.map(sm=>{
+    const ex = prevM[sm.id] || {};
+    return { id:sm.id, home:sm.home, away:sm.away, label:sm.label,
+             phase: ex.phase || 'group', played: !!ex.played,
+             ah: ex.ah ?? null, aa: ex.aa ?? null };
+  });
+  const prevB = Object.fromEntries(STATE.bonus.map(b=>[b.id,b]));
+  STATE.bonus = SEED.bonus.map(sb=>{
+    const ex = prevB[sb.id] || {};
+    return { id:sb.id, text:sb.text, points:sb.points, type:sb.type,
+             answers:sb.answers, correct: ex.correct || '', overrides: ex.overrides || {} };
+  });
+  saveState();
+}
+
+/* ============================================================
+   FASIT BACKEND — shared admin settlement via a Cloudflare Worker.
+   Set FASIT_API to the deployed Worker URL (see worker/README.md).
+   While empty, the app behaves exactly as before (local-only).
+   ============================================================ */
+const FASIT_API = '';   // e.g. 'https://bettingcomp-fasit.<subdomain>.workers.dev'
+const fasitUrl = (path)=> FASIT_API.replace(/\/$/,'') + path;
+
+function applyFasit(data){
+  if(!data || typeof data!=='object') return 0;
+  let n=0;
+  if(data.bonus){
+    for(const b of STATE.bonus){
+      const f=data.bonus[b.id];
+      if(f){ if('correct' in f) b.correct=f.correct||''; b.overrides=f.overrides||{}; n++; }
+    }
+  }
+  if(Array.isArray(data.adjustments)){ STATE.adjustments=data.adjustments; n++; }
+  if(data.rules){ for(const k in data.rules) STATE.rules[k]={...STATE.rules[k],...data.rules[k]}; n++; }
+  if(data.structuralValues){ STATE.structuralValues={...STATE.structuralValues,...data.structuralValues}; n++; }
+  if(data.phases){ for(const m of STATE.matches){ if(data.phases[m.id]) m.phase=data.phases[m.id]; } n++; }
+  if(n) saveState();
+  return n;
+}
+function buildFasit(){
+  const bonus={};
+  for(const b of STATE.bonus) bonus[b.id]={correct:b.correct||'', overrides:b.overrides||{}};
+  const phases={};
+  for(const m of STATE.matches){ if(m.phase && m.phase!=='group') phases[m.id]=m.phase; }
+  return { bonus, adjustments:STATE.adjustments, rules:STATE.rules,
+           structuralValues:STATE.structuralValues, phases };
+}
+async function loadFasit(){
+  if(!FASIT_API) return 0;
+  const res=await fetch(fasitUrl('/fasit?t='+Date.now()), {cache:'no-store'});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const txt=await res.text();
+  return txt ? applyFasit(JSON.parse(txt)) : 0;
+}
+async function saveFasit(){
+  saveState();
+  if(!FASIT_API || !App._adminKey) return;
+  try{
+    const res=await fetch(fasitUrl('/fasit'), {
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Admin-Password':App._adminKey},
+      body:JSON.stringify(buildFasit()),
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+  }catch(e){ toast('Kunne ikke lagre fasit til server: '+e.message,'err'); }
+}
+
+/* ============================================================
    SCORING ENGINE
    ============================================================ */
 function sign(n){ return n>0?1:(n<0?-1:0); }
@@ -689,17 +767,25 @@ const App={
       <div class="px-5 py-6">
         <label class="eyebrow">Passord</label>
         <input id="admPass" type="password" class="inp" style="margin-top:8px" placeholder="••••••" onkeydown="if(event.key==='Enter')App.checkAdmin()" />
-        <p style="font-size:12px;color:var(--muted-2);margin-top:8px">Standard passord er <span class="kbd">admin</span></p>
+        <p style="font-size:12px;color:var(--muted-2);margin-top:8px">${FASIT_API?'Skriv inn admin-passordet.':'Standard passord er <span class="kbd">admin</span>'}</p>
         <button class="btn btn-gold w-full" style="margin-top:16px;justify-content:center" onclick="App.checkAdmin()">
           <i data-lucide="unlock" style="width:16px;height:16px"></i> Lås opp</button>
         <div id="admErr" style="color:var(--outcome);font-size:13px;margin-top:10px;text-align:center" hidden>Feil passord.</div>
       </div>`);
     setTimeout(()=>document.getElementById('admPass')?.focus(),50);
   },
-  checkAdmin(){
+  _adminKey:null,
+  async checkAdmin(){
     const v=document.getElementById('admPass').value;
-    if(v===STATE.adminPassword){ this.renderAdmin('matches'); }
-    else { document.getElementById('admErr').hidden=false; }
+    const fail=()=>{ const e=document.getElementById('admErr'); if(e) e.hidden=false; };
+    if(FASIT_API){
+      try{
+        const res=await fetch(fasitUrl('/verify'), {method:'POST', headers:{'X-Admin-Password':v}});
+        if(res.ok){ this._adminKey=v; this.renderAdmin('matches'); } else fail();
+      }catch(err){ toast('Kunne ikke nå server: '+err.message,'err'); }
+    } else {
+      if(v===STATE.adminPassword){ this._adminKey=v; this.renderAdmin('matches'); } else fail();
+    }
   },
   renderAdmin(section='matches'){
     const tabs=[['matches','Kamper'],['bonus','Bonus'],['rules','Poeng'],['structural','Justeringer'],['sync','Sync'],['data','Data']];
@@ -744,7 +830,7 @@ const App={
       </table></div>`;
   },
   setScore(id,k,v){ const m=STATE.matches.find(x=>x.id===id); m[k]=v===''?null:parseInt(v,10); saveState(); this.renderAll(); },
-  setPhase(id,v){ STATE.matches.find(x=>x.id===id).phase=v; saveState(); this.renderAll(); },
+  setPhase(id,v){ STATE.matches.find(x=>x.id===id).phase=v; saveFasit(); this.renderAll(); },
   setPlayed(id,v){ STATE.matches.find(x=>x.id===id).played=v; saveState(); this.renderAll(); },
 
   admBonus(){
@@ -764,7 +850,7 @@ const App={
     return `<p style="font-size:13px;color:var(--muted);margin-bottom:14px">Sett fasit for hvert spørsmål — appen retter automatisk (tall, ja/nei og navn håndteres fleksibelt). Bruk manuell retting for skjønnsspørsmål som «nevn tre spillere».</p>
       <div class="space-y-3">${rows}</div>`;
   },
-  setBonusCorrect(id,v){ STATE.bonus.find(b=>b.id===id).correct=v.trim(); saveState(); this.renderAll(); },
+  setBonusCorrect(id,v){ STATE.bonus.find(b=>b.id===id).correct=v.trim(); saveFasit(); this.renderAll(); },
   openBonusOverride(id){
     const b=STATE.bonus.find(x=>x.id===id);
     const rows=STATE.participants.filter(p=>b.answers[p]).map(p=>{
@@ -790,7 +876,7 @@ const App={
   setOverride(id,player,val){
     const b=STATE.bonus.find(x=>x.id===id);
     if(val===null) delete b.overrides[player]; else b.overrides[player]=val;
-    saveState(); this.openBonusOverride(id); this.renderAll();
+    saveFasit(); this.openBonusOverride(id); this.renderAll();
   },
 
   admRules(){
@@ -812,8 +898,8 @@ const App={
       <h3 class="eyebrow" style="margin:22px 0 8px">Strukturelle bonusverdier</h3>
       <div style="overflow-x:auto"><table class="adm"><tbody>${structRows}</tbody></table></div>`;
   },
-  setRule(phase,tier,v){ STATE.rules[phase][tier]=parseInt(v,10)||0; saveState(); this.renderAll(); },
-  setStructVal(k,v){ STATE.structuralValues[k]=parseInt(v,10)||0; saveState(); },
+  setRule(phase,tier,v){ STATE.rules[phase][tier]=parseInt(v,10)||0; saveFasit(); this.renderAll(); },
+  setStructVal(k,v){ STATE.structuralValues[k]=parseInt(v,10)||0; saveFasit(); },
 
   admStructural(){
     const presets=STRUCTURAL.map(([k,l,_])=>`<option value="${l} (+${STATE.structuralValues[k]})|${STATE.structuralValues[k]}">${l} · ${STATE.structuralValues[k]}p</option>`).join('');
@@ -847,9 +933,9 @@ const App={
     const label=document.getElementById('adjLabel').value||'Justering';
     const points=parseInt(document.getElementById('adjPoints').value,10)||0;
     STATE.adjustments.push({id:'a'+Date.now()+Math.random().toString(36).slice(2,6),player,label,points});
-    saveState(); this.renderAdmin('structural'); this.renderAll(); toast('Justering lagt til','ok');
+    saveFasit(); this.renderAdmin('structural'); this.renderAll(); toast('Justering lagt til','ok');
   },
-  removeAdj(id){ STATE.adjustments=STATE.adjustments.filter(a=>a.id!==id); saveState(); this.renderAdmin('structural'); this.renderAll(); },
+  removeAdj(id){ STATE.adjustments=STATE.adjustments.filter(a=>a.id!==id); saveFasit(); this.renderAdmin('structural'); this.renderAll(); },
 
   admSync(){
     return `
@@ -918,11 +1004,14 @@ const App={
    ============================================================ */
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') App.closeModal(); });
 loadState();
+reseed();
 App.renderAll();
 icons();
 
-/* Pull latest results written by the poller (non-blocking, offline-safe). */
-loadResults().then(n=>{ if(n){ App.renderAll(); } }).catch(()=>{});
+/* Pull shared state: results (poller) + fasit (admin settlement). Non-blocking. */
+Promise.allSettled([loadResults(), loadFasit()]).then(rs=>{
+  if(rs.some(r=>r.status==='fulfilled' && r.value)) App.renderAll();
+});
 
 /* Service worker (graceful) */
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
