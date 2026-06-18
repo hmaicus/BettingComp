@@ -7,7 +7,10 @@ name: Poll match results
 
 on:
   schedule:
-    - cron: '*/10 * * * *'   # every 10 min (GitHub may delay under load)
+    # WC results land ~18:00-06:00 UTC (matches kick off 16:00-04:00, +~2h).
+    # Poll hourly across that window; idle the rest of the day. All times UTC.
+    - cron: '0 18-23 * * *'
+    - cron: '0 0-6 * * *'
   workflow_dispatch:          # allow manual runs from the Actions tab
 
 permissions:
