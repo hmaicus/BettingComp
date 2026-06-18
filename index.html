@@ -163,6 +163,9 @@
         <div id="liveBadge" class="hidden sm:flex items-center gap-2 mono" style="font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border-soft);padding:6px 11px;border-radius:999px">
           <span class="dot d-exact" style="animation:none"></span><span id="resolvedCount">0</span> kamper avgjort
         </div>
+        <button class="btn btn-ghost" style="padding:9px 12px" onclick="App.openGuide()" title="Legg til på hjemskjerm">
+          <i data-lucide="smartphone" style="width:17px;height:17px"></i>
+        </button>
         <button class="btn btn-ghost" style="padding:9px 12px" onclick="App.openAdmin()" title="Admin">
           <i data-lucide="shield-half" style="width:17px;height:17px"></i>
         </button>
@@ -773,6 +776,45 @@ const App={
     document.body.style.overflow='hidden'; icons();
   },
   closeModal(){ document.getElementById('modalHost').innerHTML=''; document.body.style.overflow=''; },
+
+  /* ---- ADD-TO-HOMESCREEN GUIDE ---- */
+  openGuide(){
+    const step=(n,html)=>`<div class="flex items-start gap-3" style="padding:10px 0">
+      <div class="rank-badge" style="width:26px;height:26px;font-size:13px;flex-shrink:0">${n}</div>
+      <div style="font-size:14px;line-height:1.5;padding-top:2px">${html}</div></div>`;
+    const ios=`
+      <p style="font-size:13px;color:var(--muted);margin-bottom:6px">Må gjøres i <b>Safari</b> (fungerer ikke i Chrome eller apper med innebygd nettleser).</p>
+      ${step(1,'Åpne siden i <b>Safari</b>.')}
+      ${step(2,'Trykk på <b>Del</b>-knappen <i data-lucide="share" style="width:15px;height:15px;display:inline;vertical-align:-2px"></i> nederst på skjermen.')}
+      ${step(3,'Bla ned og velg <b>«Legg til på Hjem-skjerm»</b> <i data-lucide="plus-square" style="width:15px;height:15px;display:inline;vertical-align:-2px"></i>.')}
+      ${step(4,'Trykk <b>«Legg til»</b> øverst til høyre. Appen dukker nå opp på hjemskjermen.')}`;
+    const android=`
+      <p style="font-size:13px;color:var(--muted);margin-bottom:6px">Anbefalt i <b>Chrome</b>.</p>
+      ${step(1,'Åpne siden i <b>Chrome</b>.')}
+      ${step(2,'Trykk på <b>meny-knappen</b> <i data-lucide="more-vertical" style="width:15px;height:15px;display:inline;vertical-align:-2px"></i> øverst til høyre.')}
+      ${step(3,'Velg <b>«Legg til på startsiden»</b> (eller <b>«Installer app»</b>).')}
+      ${step(4,'Bekreft med <b>«Legg til»</b> / <b>«Installer»</b>. Appen dukker nå opp på hjemskjermen.')}`;
+    this.modal(`
+      <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border)">
+        <div class="flex items-center gap-2"><i data-lucide="smartphone" style="width:20px;height:20px;color:var(--gold)"></i>
+        <h2 class="font-display" style="font-weight:800;font-size:20px">Legg til på hjemskjerm</h2></div>
+        <button class="btn btn-ghost" style="padding:8px 10px" onclick="App.closeModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+      </div>
+      <div class="seg mx-5 my-4" id="guideSeg">
+        <button class="on" onclick="App.guideTab('ios',this)">iPhone / iPad</button>
+        <button onclick="App.guideTab('android',this)">Android</button>
+      </div>
+      <div class="px-5 pb-6" style="overflow-y:auto">
+        <div id="guide-ios">${ios}</div>
+        <div id="guide-android" hidden>${android}</div>
+      </div>`);
+  },
+  guideTab(which,btn){
+    document.querySelectorAll('#guideSeg button').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
+    document.getElementById('guide-ios').hidden = which!=='ios';
+    document.getElementById('guide-android').hidden = which!=='android';
+    icons();
+  },
 
   /* ---- ADMIN ---- */
   openAdmin(){
