@@ -1,0 +1,14 @@
+{
+  "name": "vm2026-tipping",
+  "version": "1.0.0",
+  "private": true,
+  "description": "World Cup 2026 predictor + football-data.org result poller.",
+  "type": "module",
+  "scripts": {
+    "poll": "node --env-file=.env scripts/poll-results.mjs",
+    "poll:watch": "node --env-file=.env scripts/poll-results.mjs --watch"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

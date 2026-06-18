@@ -1,0 +1,13 @@
+{
+  "name": "VM 2026 Tipping",
+  "short_name": "VM 2026",
+  "description": "World Cup 2026 Predictor — leaderboard, match predictions and bonus questions.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0e16",
+  "theme_color": "#0a0e16",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
