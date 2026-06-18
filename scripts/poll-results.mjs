@@ -172,19 +172,29 @@ async function pollOnce() {
     if (!r.awayCode) log(`  WARN unmapped team tla "${r.awayTla}" (${r.awayName})`);
   }
 
-  await writeFile(
-    CFG.outFile,
-    JSON.stringify({
-      competition: CFG.comp,
-      updatedAt: new Date().toISOString(),
-      count: results.length,
-      results,
-    }, null, 2),
-  );
+  // Only rewrite results.json when the actual results change (not just the
+  // timestamp) so the Actions cron commits/redeploys only on real changes.
+  const resultsJson = JSON.stringify(results);
+  let prevJson = null;
+  try { prevJson = JSON.stringify(JSON.parse(await readFile(CFG.outFile, 'utf8')).results); } catch {}
+
+  if (resultsJson !== prevJson) {
+    await writeFile(
+      CFG.outFile,
+      JSON.stringify({
+        competition: CFG.comp,
+        updatedAt: new Date().toISOString(),
+        count: results.length,
+        results,
+      }, null, 2),
+    );
+    log(`polled: ${results.length} finished, ${fresh.length} new -> wrote ${CFG.outFile}`);
+  } else {
+    log(`polled: ${results.length} finished, no changes -> ${CFG.outFile} unchanged`);
+  }
+
   state.seen = [...seen];
   await writeState(state);
-
-  log(`polled: ${results.length} finished, ${fresh.length} new -> wrote ${CFG.outFile}`);
   return fresh.length;
 }
 
