@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-19T00:19:18.405Z",
-  "count": 27,
+  "updatedAt": "2026-06-19T04:06:50.794Z",
+  "count": 28,
   "results": [
     {
       "matchId": 537327,
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URY",
+      "awayTla": "URU",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -379,6 +379,20 @@
       "homeCode": "Can",
       "awayCode": "Qat",
       "home": 6,
+      "away": 0
+    },
+    {
+      "matchId": 537330,
+      "utcDate": "2026-06-19T01:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Mexico",
+      "awayName": "South Korea",
+      "homeTla": "MEX",
+      "awayTla": "KOR",
+      "homeCode": "Mex",
+      "awayCode": "Kor",
+      "home": 1,
       "away": 0
     }
   ],
