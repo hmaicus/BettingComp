@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-18T21:31:23.691Z",
-  "count": 26,
+  "updatedAt": "2026-06-19T00:19:18.405Z",
+  "count": 27,
   "results": [
     {
       "matchId": 537327,
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URU",
+      "awayTla": "URY",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -366,6 +366,20 @@
       "awayCode": "Bos",
       "home": 4,
       "away": 1
+    },
+    {
+      "matchId": 537336,
+      "utcDate": "2026-06-18T22:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Canada",
+      "awayName": "Qatar",
+      "homeTla": "CAN",
+      "awayTla": "QAT",
+      "homeCode": "Can",
+      "awayCode": "Qat",
+      "home": 6,
+      "away": 0
     }
   ],
   "knockout": [
