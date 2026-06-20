@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-20T07:49:14.001Z",
+  "updatedAt": "2026-06-20T19:07:38.098Z",
   "count": 32,
   "results": [
     {
@@ -29,20 +29,6 @@
       "homeCode": "Kor",
       "awayCode": "Cze",
       "home": 2,
-      "away": 1
-    },
-    {
-      "matchId": 537333,
-      "utcDate": "2026-06-12T19:00:00Z",
-      "stage": "GROUP_STAGE",
-      "status": "FINISHED",
-      "homeName": "Canada",
-      "awayName": "Bosnia-Herzegovina",
-      "homeTla": "CAN",
-      "awayTla": "BIH",
-      "homeCode": "Can",
-      "awayCode": "Bos",
-      "home": 1,
       "away": 1
     },
     {
@@ -449,6 +435,20 @@
       "homeCode": "Tür",
       "awayCode": "Par",
       "home": 0,
+      "away": 1
+    },
+    {
+      "matchId": 537359,
+      "utcDate": "2026-06-20T17:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Netherlands",
+      "awayName": "Sweden",
+      "homeTla": "NED",
+      "awayTla": "SWE",
+      "homeCode": "Net",
+      "awayCode": "Swe",
+      "home": 5,
       "away": 1
     }
   ],
