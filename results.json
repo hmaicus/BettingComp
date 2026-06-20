@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-19T23:58:36.004Z",
-  "count": 29,
+  "updatedAt": "2026-06-20T03:30:20.185Z",
+  "count": 31,
   "results": [
     {
       "matchId": 537327,
@@ -407,6 +407,34 @@
       "homeCode": "USA",
       "awayCode": "Aus",
       "home": 2,
+      "away": 0
+    },
+    {
+      "matchId": 537342,
+      "utcDate": "2026-06-19T22:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Scotland",
+      "awayName": "Morocco",
+      "homeTla": "SCO",
+      "awayTla": "MAR",
+      "homeCode": "Sco",
+      "awayCode": "Mor",
+      "home": 0,
+      "away": 1
+    },
+    {
+      "matchId": 537341,
+      "utcDate": "2026-06-20T00:30:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Brazil",
+      "awayName": "Haiti",
+      "homeTla": "BRA",
+      "awayTla": "HAI",
+      "homeCode": "Bra",
+      "awayCode": "Hai",
+      "home": 3,
       "away": 0
     }
   ],
