@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-20T03:30:20.185Z",
-  "count": 31,
+  "updatedAt": "2026-06-20T07:49:14.001Z",
+  "count": 32,
   "results": [
     {
       "matchId": 537327,
@@ -436,6 +436,20 @@
       "awayCode": "Hai",
       "home": 3,
       "away": 0
+    },
+    {
+      "matchId": 537347,
+      "utcDate": "2026-06-20T03:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Turkey",
+      "awayName": "Paraguay",
+      "homeTla": "TUR",
+      "awayTla": "PAR",
+      "homeCode": "Tür",
+      "awayCode": "Par",
+      "home": 0,
+      "away": 1
     }
   ],
   "knockout": [
