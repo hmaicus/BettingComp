@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-21T00:02:32.309Z",
-  "count": 34,
+  "updatedAt": "2026-06-21T04:01:05.432Z",
+  "count": 35,
   "results": [
     {
       "matchId": 537327,
@@ -478,6 +478,20 @@
       "awayCode": "Cot",
       "home": 2,
       "away": 1
+    },
+    {
+      "matchId": 537354,
+      "utcDate": "2026-06-21T00:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Ecuador",
+      "awayName": "Curaçao",
+      "homeTla": "ECU",
+      "awayTla": "CUW",
+      "homeCode": "Ecu",
+      "awayCode": "Cur",
+      "home": 0,
+      "away": 0
     }
   ],
   "knockout": [
