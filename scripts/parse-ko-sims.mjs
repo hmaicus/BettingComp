@@ -1,7 +1,11 @@
-// One-off: parse data/knockout-sims.md into coded JSON keyed by app nickname.
-import { readFileSync, writeFileSync } from 'node:fs';
+// Parse the knockout-sim markdown files into coded JSON keyed by app nickname.
+// Reads the main compilation plus any per-player add-on files (e.g. gemini-code-*.md).
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 
-const raw = readFileSync('data/knockout-sims.md', 'utf8').split('\n').filter((l) => l.trim() !== '```');
+const FILES = ['data/knockout-sims.md', ...readdirSync('data')
+  .filter((f) => f.startsWith('gemini-code-') && f.endsWith('.md'))
+  .map((f) => 'data/' + f)];
+const raw = FILES.flatMap((f) => readFileSync(f, 'utf8').split('\n')).filter((l) => l.trim() !== '```');
 
 const NAME2CODE = {
   'Algeria': 'Alg', 'Argentina': 'Arg', 'Australia': 'Aus', 'Austria': 'Aut', 'Belgium': 'Bel',
