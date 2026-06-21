@@ -2,3 +2,5 @@ node_modules/
 .env
 scripts/.poller-state.json
 .DS_Store
+data/knockout-sims.json
+worker/.wrangler/
