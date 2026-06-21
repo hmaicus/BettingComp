@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-21T04:01:05.432Z",
-  "count": 35,
+  "updatedAt": "2026-06-21T08:56:27.420Z",
+  "count": 36,
   "results": [
     {
       "matchId": 537327,
@@ -492,6 +492,20 @@
       "awayCode": "Cur",
       "home": 0,
       "away": 0
+    },
+    {
+      "matchId": 537360,
+      "utcDate": "2026-06-21T04:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Tunisia",
+      "awayName": "Japan",
+      "homeTla": "TUN",
+      "awayTla": "JPN",
+      "homeCode": "Tun",
+      "awayCode": "Jap",
+      "home": 0,
+      "away": 4
     }
   ],
   "knockout": [
