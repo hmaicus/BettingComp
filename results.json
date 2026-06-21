@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-21T19:12:24.299Z",
+  "updatedAt": "2026-06-21T21:03:23.318Z",
   "count": 37,
   "results": [
     {
@@ -518,7 +518,7 @@
       "awayTla": "KSA",
       "homeCode": "Spa",
       "awayCode": "Sau",
-      "home": 5,
+      "home": 4,
       "away": 0
     }
   ],
