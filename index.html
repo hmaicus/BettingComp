@@ -617,6 +617,32 @@ function ranked(){
   return arr;
 }
 
+// Itemized per-player points ledger — single source for the dispersion + admin audit.
+// Categories sum to the same total as computeScores().
+const LEDGER_CATS=[
+  {key:'group',  label:'Gruppespill', color:'#34d399'},
+  {key:'ko',     label:'Sluttspill',  color:'#f5c451'},
+  {key:'bonus',  label:'Bonus',       color:'#7aa2f7'},
+  {key:'adj',    label:'Justeringer', color:'#a78bfa'},
+];
+function pointsLedger(player){
+  const cats={group:[],ko:[],bonus:[],adj:[]};
+  const sums={group:0,ko:0,bonus:0,adj:0};
+  for(const m of STATE.matches){
+    if(isKO(m)){
+      const sim=koSimFor(player,m.id); const r=scoreKO(sim,m);
+      if(r.pts){ sums.ko+=r.pts; cats.ko.push({label:`${teamName(m.home)}–${teamName(m.away)}`, detail:sim?`${sim.ph}-${sim.pa} → ${m.ah}-${m.aa}`:'', pts:r.pts}); }
+    } else {
+      const pred=(STATE.predictions[player]||{})[m.id]; const r=scoreMatch(pred,m);
+      if(r.pts){ sums.group+=r.pts; cats.group.push({label:`${teamName(m.home)}–${teamName(m.away)}`, detail:pred?`${pred[0]}-${pred[1]} → ${m.ah}-${m.aa}`:'', pts:r.pts}); }
+    }
+  }
+  for(const b of STATE.bonus){ if(bonusAwarded(b,player)){ sums.bonus+=b.points; cats.bonus.push({label:b.text, detail:b.answers[player]||'', pts:b.points}); } }
+  for(const a of STATE.adjustments){ if(a.player===player){ const p=Number(a.points)||0; sums.adj+=p; cats.adj.push({label:a.label||'Justering', detail:'', pts:p}); } }
+  const out=LEDGER_CATS.map(c=>({...c, points:sums[c.key], items:cats[c.key]}));
+  return { cats:out, total:LEDGER_CATS.reduce((s,c)=>s+sums[c.key],0) };
+}
+
 /* ============================================================
    HELPERS
    ============================================================ */
@@ -865,6 +891,7 @@ const App={
   /* ---- PLAYER BREAKDOWN MODAL ---- */
   openPlayer(player){
     const s=computeScores()[player];
+    const led=pointsLedger(player);
     const preds=STATE.predictions[player]||{};
     const rows=STATE.matches.filter(m=>!isKO(m)).map(m=>{
       const pred=preds[m.id]; const r=scoreMatch(pred,m); const tm=tierMeta[r.tier];
@@ -937,11 +964,14 @@ const App={
         <button class="btn btn-ghost" style="padding:8px 10px" onclick="App.closeModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
       </div>
       <div class="px-5 py-4" style="border-bottom:1px solid var(--border-soft)">
-        <div class="grid grid-cols-4 gap-3 text-center">
-          <div><div class="num-xl hl" style="font-size:26px">${fmt(s.total)}</div><div class="eyebrow" style="margin-top:3px">Total</div></div>
-          <div><div class="num-xl" style="font-size:26px">${fmt(s.match)}</div><div class="eyebrow" style="margin-top:3px">Kamp</div></div>
-          <div><div class="num-xl" style="font-size:26px">${fmt(s.bonus)}</div><div class="eyebrow" style="margin-top:3px">Bonus</div></div>
-          <div><div class="num-xl" style="font-size:26px">${fmt(s.adj)}</div><div class="eyebrow" style="margin-top:3px">Justert</div></div>
+        <div class="flex items-end justify-between" style="margin-bottom:12px">
+          <div><div class="num-xl hl" style="font-size:32px;line-height:1">${fmt(led.total)}</div><div class="eyebrow" style="margin-top:2px">Poeng totalt</div></div>
+        </div>
+        <div style="display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--ink-2)">
+          ${led.cats.filter(c=>c.points>0).map(c=>`<div title="${esc(c.label)}" style="width:${Math.round(100*c.points/(led.total||1))}%;background:${c.color}"></div>`).join('')}
+        </div>
+        <div class="flex flex-wrap" style="gap:6px 16px;margin-top:12px">
+          ${led.cats.map(c=>`<div class="flex items-center gap-2"><span style="width:9px;height:9px;border-radius:99px;background:${c.color};display:inline-block"></span><span style="font-size:12px;color:var(--muted)">${c.label}</span><span style="font-size:13px;font-weight:800">${fmt(c.points)}</span></div>`).join('')}
         </div>
       </div>
       <div class="seg mx-5 my-4" id="pmSeg">
