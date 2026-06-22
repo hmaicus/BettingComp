@@ -1,4 +1,4 @@
-const CACHE = 'vm2026-v21';
+const CACHE = 'vm2026-v22';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', e => {

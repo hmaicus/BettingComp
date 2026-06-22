@@ -426,14 +426,18 @@ function reseed(){
   const prevM = Object.fromEntries(STATE.matches.map(m=>[m.id,m]));
   STATE.matches = SEED.matches.map(sm=>{
     const ex = prevM[sm.id] || {};
-    // KO slots have null teams in SEED; keep last-known (poller-filled) teams
-    // as a cache until loadResults re-applies them. Phase is SEED-authoritative.
+    const ko = KO_PHASES.includes(sm.phase);
+    // Teams + KO results are SEED/results.json-authoritative. KO slots must NOT
+    // inherit teams or scores from localStorage, or stale pre-restructure data
+    // (the old assumed-R32 bracket) shows up as fake "actual" matchups.
     return { id:sm.id,
-             home: sm.home ?? ex.home ?? null,
-             away: sm.away ?? ex.away ?? null,
+             home: sm.home ?? null,
+             away: sm.away ?? null,
              label: sm.label,
              phase: sm.phase || 'group', fdId: sm.fdId ?? null, date: sm.date ?? null,
-             played: !!ex.played, ah: ex.ah ?? null, aa: ex.aa ?? null };
+             played: ko ? false : !!ex.played,
+             ah: ko ? null : (ex.ah ?? null),
+             aa: ko ? null : (ex.aa ?? null) };
   });
   const prevB = Object.fromEntries(STATE.bonus.map(b=>[b.id,b]));
   STATE.bonus = SEED.bonus.map(sb=>{
