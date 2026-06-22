@@ -677,6 +677,23 @@ function formTable(n){
     if(r.pts) out[p]+=r.pts; } }
   return {window:ms.length, ranked:Object.entries(out).sort((a,b)=>b[1]-a[1])};
 }
+function bonusById(id){ return STATE.bonus.find(b=>b.id===id); }
+function closestPredictor(bonusId, target){
+  const b=bonusById(bonusId); if(!b || target==null) return null;
+  let best=null;
+  for(const p of STATE.participants){ const v=extractInt(b.answers[p]); if(v==null) continue;
+    const d=Math.abs(v-target); if(!best || d<best.d || (d===best.d && v<best.v)) best={p,v,d}; }
+  return best;
+}
+function avgPrediction(bonusId){
+  const b=bonusById(bonusId); if(!b) return null; let s=0,n=0;
+  for(const p of STATE.participants){ const v=extractInt(b.answers[p]); if(v!=null){s+=v;n++;} }
+  return n?Math.round(s/n):null;
+}
+function groupGoalsSoFar(){
+  let g=0,n=0; for(const m of STATE.matches){ if(m.phase==='group'&&m.played&&m.ah!=null&&m.aa!=null){ g+=m.ah+m.aa; n++; } }
+  return {goals:g,played:n};
+}
 let toastT=null;
 function toast(msg,kind=''){
   const host=document.getElementById('toastHost'); host.innerHTML='';
@@ -760,8 +777,15 @@ const App={
     const sharp=ranked().slice().sort((a,b)=>b.exact-a.exact || b.total-a.total)[0];
     const form=formTable(5);
     const widget=(icon,title,inner)=>`<div class="card p-4"><div class="flex items-center gap-2" style="margin-bottom:10px"><i data-lucide="${icon}" style="width:16px;height:16px;color:var(--gold)"></i><span class="eyebrow">${title}</span></div>${inner}</div>`;
+    const earliest=extractInt(bonusById(3)?.correct||''); const earlyClose=closestPredictor(3,earliest);
+    const gg=groupGoalsSoFar(); const goalAvg=avgPrediction(9);
     sh.innerHTML =
-      widget('crown','Folkets mester', fm.length ? fm.map(([c,n],i)=>`<div class="flex items-center justify-between" style="padding:4px 0"><span style="font-weight:${i?'500':'800'};font-size:${i?'13':'16'}px">${esc(teamName(c))}</span><span class="pts-pill ${i?'':'hl'}">${n}</span></div>`).join('') : '<div style="color:var(--muted);font-size:13px">—</div>')
+      widget('timer','Tidligste mål i VM', earliest!=null
+        ? `<div class="mono" style="font-weight:800;font-size:22px">${earliest}'</div><div style="font-size:12px;color:var(--muted);margin-top:4px">${earlyClose?`Nærmest: <b>${esc(displayName(earlyClose.p))}</b> (tippet ${earlyClose.v}')`:'—'}</div>`
+        : '<div style="color:var(--muted);font-size:13px">Settes av admin når et tidlig mål faller.</div>')
+      + widget('goal','Mål i gruppespillet',
+          `<div class="mono" style="font-weight:800;font-size:22px">${gg.goals}<span style="font-size:13px;color:var(--muted);font-weight:600"> mål</span></div><div style="font-size:12px;color:var(--muted);margin-top:4px">i ${gg.played} spilte kamper${goalAvg!=null?` · folket tippet snitt ${goalAvg}`:''}</div>`)
+      + widget('crown','Folkets mester', fm.length ? fm.map(([c,n],i)=>`<div class="flex items-center justify-between" style="padding:4px 0"><span style="font-weight:${i?'500':'800'};font-size:${i?'13':'16'}px">${esc(teamName(c))}</span><span class="pts-pill ${i?'':'hl'}">${n}</span></div>`).join('') : '<div style="color:var(--muted);font-size:13px">—</div>')
       + widget('star','Folkets favoritter',
           `<div style="padding:4px 0"><div class="eyebrow">Toppscorer</div><div style="font-weight:700;font-size:15px">${tops?esc(tops[0]):'—'} ${tops?`<span style="color:var(--muted);font-size:12px">(${tops[1]})</span>`:''}</div></div>
            <div style="padding:4px 0"><div class="eyebrow">Beste spiller</div><div style="font-weight:700;font-size:15px">${best?esc(best[0]):'—'} ${best?`<span style="color:var(--muted);font-size:12px">(${best[1]})</span>`:''}</div></div>`)
