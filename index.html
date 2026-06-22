@@ -768,9 +768,11 @@ const App={
       } else {
         body=`<div style="font-size:13px;color:var(--muted);margin-top:12px">Lagene avgjøres når forrige runde er ferdig.</div>`;
       }
-      return `<div class="card p-5" style="background:linear-gradient(110deg,#16233a 0%,var(--surface) 70%)">
+      const tappable = !ko || (m.home!=null && m.away!=null);
+      return `<div class="card p-5" ${tappable?`onclick="App.openMatchPredictions(${m.id})" style="cursor:pointer;`:'style="'}background:linear-gradient(110deg,#16233a 0%,var(--surface) 70%)">
         <div class="flex items-center justify-between"><span class="eyebrow">${esc(phaseLbl)}</span><span class="mono" style="font-size:12px;color:var(--gold)">${kickoffLabel(m.date)}</span></div>
-        <div style="margin-top:10px">${teams}</div>${body}</div>`;
+        <div style="margin-top:10px">${teams}</div>${body}
+        ${tappable?'<div class="flex items-center gap-1" style="margin-top:12px;color:var(--muted-2);font-size:11px"><i data-lucide="list" style="width:12px;height:12px"></i> Trykk for alle tips</div>':''}</div>`;
     }).join('') : '<div class="card p-5" style="text-align:center;color:var(--muted)">Ingen kommende kamper.</div>';
 
     // stat widgets
@@ -795,6 +797,36 @@ const App={
       + widget('target','Skarpskytteren', sharp&&sharp.exact ? `<div style="font-weight:800;font-size:16px">${esc(displayName(sharp.player))}</div><div style="font-size:12px;color:var(--muted)">${sharp.exact} blinktreff (eksakt)</div>` : '<div style="color:var(--muted);font-size:13px">Ingen eksakte ennå</div>')
       + widget('flame','Formkurven', form.window ? (()=>{const t=form.ranked[0]; return `<div style="font-weight:800;font-size:16px">${esc(displayName(t[0]))}</div><div style="font-size:12px;color:var(--muted)">${t[1]} poeng siste ${form.window} kamper</div>`;})() : '<div style="color:var(--muted);font-size:13px">Ingen spilte kamper ennå</div>');
     icons();
+  },
+  openMatchPredictions(id){
+    const m=STATE.matches.find(x=>x.id===id); if(!m) return;
+    let body;
+    if(!isKO(m)){
+      const groups={};
+      for(const p of STATE.participants){ const pr=(STATE.predictions[p]||{})[id]; if(!pr) continue; const k=`${pr[0]}–${pr[1]}`; (groups[k]=groups[k]||[]).push(p); }
+      const entries=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length || a[0].localeCompare(b[0]));
+      body=entries.length?entries.map(([score,players])=>`
+        <div style="padding:9px 0;border-bottom:1px solid var(--border-soft)">
+          <div class="flex items-center justify-between"><span class="mono" style="font-weight:800;font-size:15px">${score}</span><span class="pts-pill">${players.length}</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">${players.map(p=>esc(displayName(p))).join(', ')}</div>
+        </div>`).join(''):'<p style="color:var(--muted);font-size:13px">Ingen tips.</p>';
+    } else {
+      const rows=STATE.participants.map(p=>{ const sim=koSimFor(p,id); if(!sim||sim.h==null) return null; const r=scoreKO(sim,m); return {p,sim,r}; })
+        .filter(Boolean).sort((a,b)=>(b.r.teamsOk?1:0)-(a.r.teamsOk?1:0) || a.p.localeCompare(b.p));
+      body=rows.length?rows.map(({p,sim,r})=>`
+        <div class="flex items-center justify-between gap-3" style="padding:8px 0;border-bottom:1px solid var(--border-soft);${r.teamsOk?'background:var(--exact-bg)':''}">
+          <div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(displayName(p))}</div>
+          <div style="font-size:12px;color:var(--muted)">${esc(teamName(sim.h))} <b>${sim.ph}-${sim.pa}</b> ${esc(teamName(sim.a))}</div></div>
+          ${r.tier!=='noteams'?`<span class="eyebrow" style="white-space:nowrap;color:${r.teamsOk?'var(--exact)':'var(--outcome)'}">${r.teamsOk?'lag ✓':'feil lag'}</span>`:''}
+        </div>`).join(''):'<p style="color:var(--muted);font-size:13px">Ingen har simulert denne kampen.</p>';
+    }
+    this.modal(`
+      <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);flex-shrink:0">
+        <div><div class="eyebrow">Alle tips</div>
+        <h2 class="font-display" style="font-weight:800;font-size:20px;margin-top:2px">${esc(teamName(m.home))} – ${esc(teamName(m.away))}</h2></div>
+        <button class="btn btn-ghost" style="padding:8px 10px" onclick="App.closeModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+      </div>
+      <div class="px-5 py-3" style="flex:1;min-height:0;overflow-y:auto">${body}</div>`);
   },
 
   /* ---- LEADERBOARD ---- */
