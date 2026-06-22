@@ -647,7 +647,7 @@ function groupMatchStats(m){
   for(const p of STATE.participants){ const pr=(STATE.predictions[p]||{})[m.id]; if(!pr) continue; n++;
     const [h,a]=pr; sumH+=h; sumA+=a; if(h>a)H++; else if(a>h)A++; else D++; const k=h+'–'+a; sc[k]=(sc[k]||0)+1; }
   const top=Object.entries(sc).sort((a,b)=>b[1]-a[1])[0]||['—',0];
-  return {n,H,D,A,topScore:top[0],topN:top[1],avg: n?`${Math.round(sumH/n)}–${Math.round(sumA/n)}`:'—'};
+  return {n,H,D,A,topScore:top[0],topN:top[1],avgGoals: n?((sumH+sumA)/n).toFixed(1):'—'};
 }
 function koWinner(sim){ if(!sim) return null; if(sim.ph>sim.pa) return sim.h; if(sim.pa>sim.ph) return sim.a; if(sim.pso) return sim.pso[0]>sim.pso[1]?sim.h:sim.a; return null; }
 function koMatchStats(m){
@@ -720,9 +720,9 @@ const App={
   renderHome(){
     const host=document.getElementById('homeNext'); if(!host) return;
     const ms=nextMatches(2);
-    const bar=(label,pct,cls)=>`<div style="flex:1"><div style="font-size:10px;color:var(--muted);margin-bottom:3px">${label}</div>
+    const bar=(label,count,total,cls)=>{const pct=total?Math.round(100*count/total):0;return `<div style="flex:1"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
       <div style="height:8px;border-radius:99px;background:var(--ink-2);overflow:hidden"><div style="height:100%;width:${pct}%;background:${cls}"></div></div>
-      <div style="font-size:11px;font-weight:700;margin-top:3px">${pct}%</div></div>`;
+      <div style="font-size:13px;font-weight:800;margin-top:3px">${count}</div></div>`;};
     host.innerHTML = ms.length ? ms.map(m=>{
       const ko=isKO(m); const phaseLbl=(PHASES.find(p=>p.key===m.phase)||{}).label||'Gruppespill';
       const teams=`<span class="font-display" style="font-weight:800;font-size:19px">${esc(teamName(m.home))}</span>
@@ -731,13 +731,12 @@ const App={
       let body='';
       if(!ko){
         const s=groupMatchStats(m);
-        const hp=s.n?Math.round(100*s.H/s.n):0, dp=s.n?Math.round(100*s.D/s.n):0, ap=s.n?Math.round(100*s.A/s.n):0;
         body=`<div class="flex gap-3" style="margin-top:14px">
-            ${bar(esc(teamName(m.home)),hp,'var(--exact)')}${bar('Uavgjort',dp,'var(--muted)')}${bar(esc(teamName(m.away)),ap,'var(--gold)')}
+            ${bar(esc(teamName(m.home)),s.H,s.n,'var(--exact)')}${bar('Uavgjort',s.D,s.n,'var(--muted)')}${bar(esc(teamName(m.away)),s.A,s.n,'var(--gold)')}
           </div>
           <div class="flex gap-3" style="margin-top:14px">
             <div style="flex:1" class="card p-3"><div class="eyebrow">Mest tippet</div><div style="font-weight:800;font-size:17px;margin-top:2px" class="mono">${s.topScore}</div><div style="font-size:11px;color:var(--muted)">${s.topN} spillere</div></div>
-            <div style="flex:1" class="card p-3"><div class="eyebrow">Folkets resultat</div><div style="font-weight:800;font-size:17px;margin-top:2px" class="mono">${s.avg}</div><div style="font-size:11px;color:var(--muted)">snitt av ${s.n} tips</div></div>
+            <div style="flex:1" class="card p-3"><div class="eyebrow">Forventet mål</div><div style="font-weight:800;font-size:17px;margin-top:2px" class="mono">${s.avgGoals}</div><div style="font-size:11px;color:var(--muted)">${s.D} tror på uavgjort</div></div>
           </div>`;
       } else if(m.home!=null && m.away!=null){
         const s=koMatchStats(m);
