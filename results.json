@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-21T22:58:59.144Z",
-  "count": 38,
+  "updatedAt": "2026-06-22T00:11:50.076Z",
+  "count": 39,
   "results": [
     {
       "matchId": 537327,
@@ -534,6 +534,20 @@
       "awayCode": "Ira",
       "home": 0,
       "away": 0
+    },
+    {
+      "matchId": 537372,
+      "utcDate": "2026-06-21T22:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Uruguay",
+      "awayName": "Cape Verde Islands",
+      "homeTla": "URU",
+      "awayTla": "CPV",
+      "homeCode": "Uru",
+      "awayCode": "Cab",
+      "home": 2,
+      "away": 2
     }
   ],
   "knockout": [
