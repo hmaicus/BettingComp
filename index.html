@@ -323,6 +323,7 @@ function freshState(){
     adminPassword:'admin',
     apiToken:'',
     realNames:{...REAL_NAMES},
+    liveStats:{earliestGoal:null}, // running front-page values; NOT scored
     rules:JSON.parse(JSON.stringify(DEFAULT_RULES)),
     structuralValues:Object.fromEntries(STRUCTURAL.map(s=>[s[0],s[2]])),
     participants:SEED.participants.slice(),
@@ -440,6 +441,7 @@ function reseed(){
     return { id:sb.id, text:sb.text, points:sb.points, type:sb.type,
              answers:sb.answers, correct: ex.correct || '', overrides: ex.overrides || {} };
   });
+  if(!STATE.liveStats) STATE.liveStats={earliestGoal:null};
   // ensure every participant has a real-name entry (preserve any existing edits)
   if(!STATE.realNames) STATE.realNames={};
   for(const p of STATE.participants){ if(STATE.realNames[p]==null) STATE.realNames[p]=REAL_NAMES[p]||''; }
@@ -468,6 +470,7 @@ function applyFasit(data){
   if(data.structuralValues){ STATE.structuralValues={...STATE.structuralValues,...data.structuralValues}; n++; }
   if(data.phases){ for(const m of STATE.matches){ if(data.phases[m.id]) m.phase=data.phases[m.id]; } n++; }
   if(data.realNames){ for(const p of STATE.participants){ if(p in data.realNames) STATE.realNames[p]=data.realNames[p]; } n++; }
+  if(data.liveStats){ STATE.liveStats={...STATE.liveStats,...data.liveStats}; n++; }
   if(n) saveState();
   return n;
 }
@@ -479,7 +482,7 @@ function buildFasit(){
   const realNames={};
   for(const p of STATE.participants){ realNames[p]=STATE.realNames[p]||''; }
   return { bonus, adjustments:STATE.adjustments, rules:STATE.rules,
-           structuralValues:STATE.structuralValues, phases, realNames };
+           structuralValues:STATE.structuralValues, phases, realNames, liveStats:STATE.liveStats };
 }
 async function loadFasit(){
   if(!FASIT_API) return 0;
@@ -777,7 +780,7 @@ const App={
     const sharp=ranked().slice().sort((a,b)=>b.exact-a.exact || b.total-a.total)[0];
     const form=formTable(5);
     const widget=(icon,title,inner)=>`<div class="card p-4"><div class="flex items-center gap-2" style="margin-bottom:10px"><i data-lucide="${icon}" style="width:16px;height:16px;color:var(--gold)"></i><span class="eyebrow">${title}</span></div>${inner}</div>`;
-    const earliest=extractInt(bonusById(3)?.correct||''); const earlyClose=closestPredictor(3,earliest);
+    const earliest=(STATE.liveStats&&STATE.liveStats.earliestGoal!=null)?STATE.liveStats.earliestGoal:null; const earlyClose=closestPredictor(3,earliest);
     const gg=groupGoalsSoFar(); const goalAvg=avgPrediction(9);
     sh.innerHTML =
       widget('timer','Tidligste mål i VM', earliest!=null
@@ -1130,9 +1133,16 @@ const App={
         <button class="chip-toggle" style="margin-top:10px" onclick="App.openBonusOverride(${b.id})"><i data-lucide="sliders-horizontal" style="width:12px;height:12px;display:inline"></i> Manuell retting per spiller</button>
       </div>`;
     }).join('');
-    return `<p style="font-size:13px;color:var(--muted);margin-bottom:14px">Sett fasit for hvert spørsmål — appen retter automatisk (tall, ja/nei og navn håndteres fleksibelt). Bruk manuell retting for skjønnsspørsmål som «nevn tre spillere».</p>
+    const live=(STATE.liveStats&&STATE.liveStats.earliestGoal!=null)?STATE.liveStats.earliestGoal:'';
+    return `<div class="card p-4" style="margin-bottom:14px;border-color:var(--gold);background:var(--surface)">
+        <div class="flex items-center gap-2"><i data-lucide="timer" style="width:15px;height:15px;color:var(--gold)"></i><span class="eyebrow">Forsiden · tidligste mål så langt</span></div>
+        <input class="inp" style="margin-top:8px" type="number" min="1" value="${live}" placeholder="Minutt (f.eks. 3)" onchange="App.setLiveStat('earliestGoal',this.value)">
+        <p style="font-size:11px;color:var(--muted-2);margin-top:6px">Vises live på forsiden og gir <b>ingen poeng</b>. Oppdater når et tidligere mål faller. Bonus-fasit settes nedenfor (først når VM er ferdig).</p>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Sett fasit for hvert spørsmål — appen retter automatisk (tall, ja/nei og navn håndteres fleksibelt). Bruk manuell retting for skjønnsspørsmål som «nevn tre spillere».</p>
       <div class="space-y-3">${rows}</div>`;
   },
+  setLiveStat(key,v){ if(!STATE.liveStats) STATE.liveStats={}; const n=v===''?null:parseInt(v,10); STATE.liveStats[key]=(n==null||isNaN(n))?null:n; saveFasit(); this.renderAll(); },
   setBonusCorrect(id,v){ STATE.bonus.find(b=>b.id===id).correct=v.trim(); saveFasit(); this.renderAll(); },
 
   admPlayers(){
