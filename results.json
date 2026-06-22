@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-22T00:11:50.076Z",
-  "count": 39,
+  "updatedAt": "2026-06-22T04:02:18.324Z",
+  "count": 40,
   "results": [
     {
       "matchId": 537327,
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URU",
+      "awayTla": "URY",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -542,12 +542,26 @@
       "status": "FINISHED",
       "homeName": "Uruguay",
       "awayName": "Cape Verde Islands",
-      "homeTla": "URU",
+      "homeTla": "URY",
       "awayTla": "CPV",
       "homeCode": "Uru",
       "awayCode": "Cab",
       "home": 2,
       "away": 2
+    },
+    {
+      "matchId": 537366,
+      "utcDate": "2026-06-22T01:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "New Zealand",
+      "awayName": "Egypt",
+      "homeTla": "NZL",
+      "awayTla": "EGY",
+      "homeCode": "New",
+      "awayCode": "Egy",
+      "home": 1,
+      "away": 3
     }
   ],
   "knockout": [
