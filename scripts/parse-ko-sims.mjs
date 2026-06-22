@@ -12,7 +12,7 @@ const NAME2CODE = {
   'Bosnia and Herzegovina': 'Bos', 'Brazil': 'Bra', 'Cabo Verde': 'Cab', 'Canada': 'Can',
   'Colombia': 'Col', "Cote D'Ivoire": 'Cot', 'Croatia': 'Cro', 'Curacao': 'Cur', 'Czechia': 'Cze',
   'DR Congo': 'DR', 'Ecuador': 'Ecu', 'Egypt': 'Egy', 'England': 'Eng', 'France': 'Fra',
-  'Germany': 'Ger', 'Ghana': 'Gha', 'Iran': 'Ira', 'Japan': 'Jap', 'Jordan': 'Jor',
+  'Germany': 'Ger', 'Ghana': 'Gha', 'Iran': 'Ira', 'Iraq': 'Irq', 'Japan': 'Jap', 'Jordan': 'Jor',
   'Korea Republic': 'Kor', 'Mexico': 'Mex', 'Morocco': 'Mor', 'Netherlands': 'Net',
   'New Zealand': 'New', 'Norway': 'Nor', 'Panama': 'Pan', 'Paraguay': 'Par', 'Portugal': 'Por',
   'Qatar': 'Qat', 'Saudi Arabia': 'Sau', 'Scotland': 'Sco', 'Senegal': 'Sen', 'South Africa': 'Sou',

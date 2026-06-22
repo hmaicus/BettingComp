@@ -60,7 +60,7 @@ const TLA_TO_CODE = {
   ALG: 'Alg', ARG: 'Arg', AUS: 'Aus', AUT: 'Aut', BEL: 'Bel', BIH: 'Bos', BRA: 'Bra',
   CAN: 'Can', CIV: 'Cot', COD: 'DR', COL: 'Col', CPV: 'Cab', CRO: 'Cro',
   CUW: 'Cur', CZE: 'Cze', ECU: 'Ecu', EGY: 'Egy', ENG: 'Eng', ESP: 'Spa',
-  FRA: 'Fra', GER: 'Ger', GHA: 'Gha', HAI: 'Hai', IRN: 'Ira', IRQ: 'Ira',
+  FRA: 'Fra', GER: 'Ger', GHA: 'Gha', HAI: 'Hai', IRN: 'Ira', IRQ: 'Irq',
   JOR: 'Jor', JPN: 'Jap', KOR: 'Kor', KSA: 'Sau', MAR: 'Mor', MEX: 'Mex',
   NED: 'Net', NOR: 'Nor', NZL: 'New', PAN: 'Pan', PAR: 'Par', POR: 'Por',
   QAT: 'Qat', RSA: 'Sou', SCO: 'Sco', SEN: 'Sen', SUI: 'Swi', SWE: 'Swe',

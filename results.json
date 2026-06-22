@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-22T04:02:18.324Z",
+  "updatedAt": "2026-06-22T06:46:43.322Z",
   "count": 40,
   "results": [
     {
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URY",
+      "awayTla": "URU",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -250,7 +250,7 @@
       "awayName": "Norway",
       "homeTla": "IRQ",
       "awayTla": "NOR",
-      "homeCode": "Ira",
+      "homeCode": "Irq",
       "awayCode": "Nor",
       "home": 1,
       "away": 4
@@ -542,7 +542,7 @@
       "status": "FINISHED",
       "homeName": "Uruguay",
       "awayName": "Cape Verde Islands",
-      "homeTla": "URY",
+      "homeTla": "URU",
       "awayTla": "CPV",
       "homeCode": "Uru",
       "awayCode": "Cab",
