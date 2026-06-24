@@ -395,6 +395,7 @@ function applyResults(data){
       if(k.home!=null && m.home!==k.home){ m.home=k.home; ch=true; }
       if(k.away!=null && m.away!==k.away){ m.away=k.away; ch=true; }
       if((m.duration||null)!==(k.duration||null)){ m.duration=k.duration||null; ch=true; }
+      if((m.winner||null)!==(k.winner||null)){ m.winner=k.winner||null; ch=true; }
       if(k.finished){
         if(k.duration==='REGULAR' && k.ah!=null && k.aa!=null){
           if(m.ah!==k.ah||m.aa!==k.aa||!m.played){ m.ah=k.ah; m.aa=k.aa; m.played=true; ch=true; }
@@ -580,7 +581,7 @@ function bonusAwarded(b, player){
 function computeScores(){
   const out={};
   for(const p of STATE.participants){
-    out[p]={match:0,ko:0,bonus:0,adj:0,total:0,exact:0,gd:0,outcome:0,miss:0,
+    out[p]={match:0,ko:0,struct:0,bonus:0,adj:0,total:0,exact:0,gd:0,outcome:0,miss:0,
             bonusHits:0,bonusResolved:0};
   }
   // match points (group stage + team-gated knockout)
@@ -604,7 +605,9 @@ function computeScores(){
   for(const a of STATE.adjustments){
     if(out[a.player]) out[a.player].adj+=Number(a.points)||0;
   }
-  for(const p of STATE.participants){ out[p].total=out[p].match+out[p].bonus+out[p].adj; }
+  // knockout structural rewards (advancement + pairing + winner)
+  for(const p of STATE.participants){ out[p].struct=koStructural(p).total; }
+  for(const p of STATE.participants){ out[p].total=out[p].match+out[p].struct+out[p].bonus+out[p].adj; }
   return out;
 }
 function ranked(){
@@ -617,17 +620,50 @@ function ranked(){
   return arr;
 }
 
+// Knockout structural rewards (team advancement per stage, correct bracket pairing,
+// correct match winner) — computed from KO_SIMS vs reality (results.json). Shared by
+// pointsLedger + computeScores so totals never diverge. All zero until KO teams resolve.
+function koStructural(player){
+  const sv=STATE.structuralValues||{};
+  const qStage={R32:sv.qR32||0,R16:sv.qR16||0,QF:sv.qQF||0,SF:sv.qSF||0,Final:sv.qFinal||0};
+  const stLabel=s=>(PHASES.find(p=>p.key===s)||{}).label||s;
+  // reality: teams present in each stage's slots = teams that reached that stage
+  const reached={R32:new Set(),R16:new Set(),QF:new Set(),SF:new Set(),Final:new Set()};
+  for(const m of STATE.matches){ if(reached[m.phase]){ if(m.home) reached[m.phase].add(m.home); if(m.away) reached[m.phase].add(m.away); } }
+  const adv=[]; let advPts=0;
+  for(const S of ['R32','R16','QF','SF','Final']){
+    if(!qStage[S]) continue;
+    const mine=new Set();
+    for(const m of STATE.matches){ if(m.phase!==S) continue; const sim=koSimFor(player,m.id); if(sim){ if(sim.h)mine.add(sim.h); if(sim.a)mine.add(sim.a); } }
+    for(const t of mine){ if(reached[S].has(t)){ advPts+=qStage[S]; adv.push({label:`${teamName(t)} → ${stLabel(S)}`, pts:qStage[S]}); } }
+  }
+  const pair=[],win=[]; let pairPts=0,winPts=0;
+  const bp=sv.bracket||0, mw=sv.matchWinner||0;
+  for(const m of STATE.matches){ if(!isKO(m)||m.home==null||m.away==null) continue;
+    const sim=koSimFor(player,m.id); if(!sim||sim.h==null) continue;
+    const teamsOk=(sim.h===m.home&&sim.a===m.away)||(sim.h===m.away&&sim.a===m.home);
+    if(!teamsOk) continue;
+    if(bp){ pairPts+=bp; pair.push({label:`${teamName(m.home)}–${teamName(m.away)}`, pts:bp}); }
+    if(mw && m.winner && koWinner(sim)===m.winner){ winPts+=mw; win.push({label:`${teamName(m.winner)} vinner`, pts:mw}); }
+  }
+  return { adv:{points:advPts,items:adv}, pair:{points:pairPts,items:pair}, win:{points:winPts,items:win},
+           total:advPts+pairPts+winPts };
+}
+
 // Itemized per-player points ledger — single source for the dispersion + admin audit.
 // Categories sum to the same total as computeScores().
 const LEDGER_CATS=[
   {key:'group',  label:'Gruppespill', color:'#34d399'},
   {key:'ko',     label:'Sluttspill',  color:'#f5c451'},
+  {key:'adv',    label:'Lag videre',  color:'#fbbf24'},
+  {key:'pair',   label:'Bracket-par', color:'#fb923c'},
+  {key:'win',    label:'Kampvinner',  color:'#f87171'},
   {key:'bonus',  label:'Bonus',       color:'#7aa2f7'},
   {key:'adj',    label:'Justeringer', color:'#a78bfa'},
 ];
 function pointsLedger(player){
-  const cats={group:[],ko:[],bonus:[],adj:[]};
-  const sums={group:0,ko:0,bonus:0,adj:0};
+  const cats={group:[],ko:[],adv:[],pair:[],win:[],bonus:[],adj:[]};
+  const sums={group:0,ko:0,adv:0,pair:0,win:0,bonus:0,adj:0};
   for(const m of STATE.matches){
     if(isKO(m)){
       const sim=koSimFor(player,m.id); const r=scoreKO(sim,m);
@@ -637,6 +673,10 @@ function pointsLedger(player){
       if(r.pts){ sums.group+=r.pts; cats.group.push({label:`${teamName(m.home)}–${teamName(m.away)}`, detail:pred?`${pred[0]}-${pred[1]} → ${m.ah}-${m.aa}`:'', pts:r.pts}); }
     }
   }
+  const ks=koStructural(player);
+  cats.adv=ks.adv.items; sums.adv=ks.adv.points;
+  cats.pair=ks.pair.items; sums.pair=ks.pair.points;
+  cats.win=ks.win.items; sums.win=ks.win.points;
   for(const b of STATE.bonus){ if(bonusAwarded(b,player)){ sums.bonus+=b.points; cats.bonus.push({label:b.text, detail:b.answers[player]||'', pts:b.points}); } }
   for(const a of STATE.adjustments){ if(a.player===player){ const p=Number(a.points)||0; sums.adj+=p; cats.adj.push({label:a.label||'Justering', detail:'', pts:p}); } }
   const out=LEDGER_CATS.map(c=>({...c, points:sums[c.key], items:cats[c.key]}));
@@ -1166,15 +1206,16 @@ const App={
   admOverview(){
     const cs=computeScores();
     const sort=this._ovSort||{key:'total',dir:-1};
-    const rows=STATE.participants.map(p=>{const s=cs[p];return {p,group:s.match-s.ko,ko:s.ko,bonus:s.bonus,adj:s.adj,total:s.total};});
+    const rows=STATE.participants.map(p=>{const s=cs[p];return {p,group:s.match-s.ko,ko:s.ko,struct:s.struct,bonus:s.bonus,adj:s.adj,total:s.total};});
     rows.sort((a,b)=>{const k=sort.key; const cmp=(k==='p')?displayName(a.p).localeCompare(displayName(b.p)):(a[k]-b[k]); return sort.dir*cmp || displayName(a.p).localeCompare(displayName(b.p));});
-    const cols=[['p','Spiller'],['group','Gruppe'],['ko','Sluttsp.'],['bonus','Bonus'],['adj','Just.'],['total','Total']];
+    const cols=[['p','Spiller'],['group','Gruppe'],['ko','Sluttsp.'],['struct','Struktur'],['bonus','Bonus'],['adj','Just.'],['total','Total']];
     const arrow=k=>sort.key===k?(sort.dir<0?' ↓':' ↑'):'';
     const head=cols.map(([k,l])=>`<th style="cursor:pointer;text-align:${k==='p'?'left':'right'};white-space:nowrap" onclick="App.sortOverview('${k}')">${l}${arrow(k)}</th>`).join('');
     const body=rows.map(r=>{const pj=esc(r.p).replace(/'/g,"\\'");return `<tr style="cursor:pointer" onclick="App.adminLedger('${pj}')">
       <td style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${esc(displayName(r.p))}</td>
       <td style="text-align:right" class="mono">${fmt(r.group)}</td>
       <td style="text-align:right" class="mono">${fmt(r.ko)}</td>
+      <td style="text-align:right" class="mono">${r.struct?fmt(r.struct):'–'}</td>
       <td style="text-align:right" class="mono">${fmt(r.bonus)}</td>
       <td style="text-align:right" class="mono">${r.adj?fmt(r.adj):'–'}</td>
       <td style="text-align:right;font-weight:800" class="mono hl">${fmt(r.total)}</td></tr>`;}).join('');

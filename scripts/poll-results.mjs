@@ -106,6 +106,9 @@ function toKnockout(m) {
     ah: m.score?.fullTime?.home ?? null,
     aa: m.score?.fullTime?.away ?? null,
     duration: m.score?.duration ?? null,
+    // who advances incl. extra time / penalties (for the 'Kampvinner' reward)
+    winner: m.score?.winner === 'HOME_TEAM' ? (TLA_TO_CODE[m.homeTeam?.tla] ?? null)
+          : m.score?.winner === 'AWAY_TEAM' ? (TLA_TO_CODE[m.awayTeam?.tla] ?? null) : null,
     finished: m.status === 'FINISHED',
   };
 }
