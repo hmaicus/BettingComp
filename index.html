@@ -1132,14 +1132,14 @@ const App={
     if(FASIT_API){
       try{
         const res=await fetch(fasitUrl('/verify'), {method:'POST', headers:{'X-Admin-Password':v}});
-        if(res.ok){ this._adminKey=v; this.renderAdmin('matches'); } else fail();
+        if(res.ok){ this._adminKey=v; this.renderAdmin('overview'); } else fail();
       }catch(err){ toast('Kunne ikke nå server: '+err.message,'err'); }
     } else {
-      if(v===STATE.adminPassword){ this._adminKey=v; this.renderAdmin('matches'); } else fail();
+      if(v===STATE.adminPassword){ this._adminKey=v; this.renderAdmin('overview'); } else fail();
     }
   },
-  renderAdmin(section='matches'){
-    const tabs=[['matches','Kamper'],['bonus','Bonus'],['players','Spillere'],['rules','Poeng'],['structural','Justeringer'],['sync','Sync'],['data','Data']];
+  renderAdmin(section='overview'){
+    const tabs=[['overview','Oversikt'],['matches','Kamper'],['bonus','Bonus'],['players','Spillere'],['rules','Poeng'],['structural','Justeringer'],['sync','Sync'],['data','Data']];
     this.modal(`
       <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);flex-shrink:0">
         <div class="flex items-center gap-2"><i data-lucide="shield-check" style="width:20px;height:20px;color:var(--gold)"></i>
@@ -1153,6 +1153,7 @@ const App={
       </div>
       <div id="admBody" class="px-5 py-5" style="flex:1;min-height:0;overflow-y:auto"></div>`);
     const body=document.getElementById('admBody');
+    if(section==='overview') body.innerHTML=this.admOverview();
     if(section==='matches') body.innerHTML=this.admMatches();
     if(section==='bonus') body.innerHTML=this.admBonus();
     if(section==='players') body.innerHTML=this.admPlayers();
@@ -1162,6 +1163,64 @@ const App={
     if(section==='data') body.innerHTML=this.admData();
     icons();
   },
+  admOverview(){
+    const cs=computeScores();
+    const sort=this._ovSort||{key:'total',dir:-1};
+    const rows=STATE.participants.map(p=>{const s=cs[p];return {p,group:s.match-s.ko,ko:s.ko,bonus:s.bonus,adj:s.adj,total:s.total};});
+    rows.sort((a,b)=>{const k=sort.key; const cmp=(k==='p')?displayName(a.p).localeCompare(displayName(b.p)):(a[k]-b[k]); return sort.dir*cmp || displayName(a.p).localeCompare(displayName(b.p));});
+    const cols=[['p','Spiller'],['group','Gruppe'],['ko','Sluttsp.'],['bonus','Bonus'],['adj','Just.'],['total','Total']];
+    const arrow=k=>sort.key===k?(sort.dir<0?' ↓':' ↑'):'';
+    const head=cols.map(([k,l])=>`<th style="cursor:pointer;text-align:${k==='p'?'left':'right'};white-space:nowrap" onclick="App.sortOverview('${k}')">${l}${arrow(k)}</th>`).join('');
+    const body=rows.map(r=>{const pj=esc(r.p).replace(/'/g,"\\'");return `<tr style="cursor:pointer" onclick="App.adminLedger('${pj}')">
+      <td style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${esc(displayName(r.p))}</td>
+      <td style="text-align:right" class="mono">${fmt(r.group)}</td>
+      <td style="text-align:right" class="mono">${fmt(r.ko)}</td>
+      <td style="text-align:right" class="mono">${fmt(r.bonus)}</td>
+      <td style="text-align:right" class="mono">${r.adj?fmt(r.adj):'–'}</td>
+      <td style="text-align:right;font-weight:800" class="mono hl">${fmt(r.total)}</td></tr>`;}).join('');
+    return `<p style="font-size:13px;color:var(--muted);margin-bottom:12px">Trykk på en kolonne for å sortere, eller en spiller for å se og justere poengene.</p>
+      <div style="overflow-x:auto"><table class="adm" style="width:100%;font-size:13px"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  },
+  sortOverview(key){
+    const s=this._ovSort||{key:'total',dir:-1};
+    this._ovSort = s.key===key ? {key,dir:-s.dir} : {key,dir: key==='p'?1:-1};
+    this.renderAdmin('overview');
+  },
+  adminLedger(player){
+    const led=pointsLedger(player);
+    const catBlocks=led.cats.map(c=>{
+      const items=c.items.length?c.items.map(it=>`<div class="flex items-center justify-between gap-3" style="font-size:12px;padding:5px 0;border-bottom:1px solid var(--border-soft)"><span style="color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(it.label)}${it.detail?` · <span style="color:var(--muted-2)">${esc(it.detail)}</span>`:''}</span><span class="mono" style="color:${it.pts<0?'var(--outcome)':'var(--exact)'};white-space:nowrap">${it.pts>=0?'+':''}${it.pts}</span></div>`).join(''):'<div style="font-size:12px;color:var(--muted-2);padding:4px 0">Ingen poeng ennå.</div>';
+      return `<div style="margin-top:16px"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span style="width:9px;height:9px;border-radius:99px;background:${c.color};display:inline-block"></span><span class="eyebrow">${c.label}</span></div><span class="pts-pill ${c.points?'hl':''}">${fmt(c.points)}</span></div><div style="margin-top:4px">${items}</div></div>`;
+    }).join('');
+    const pj=esc(player).replace(/'/g,"\\'");
+    const adjList=STATE.adjustments.filter(a=>a.player===player).map(a=>`<div class="flex items-center justify-between" style="padding:6px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:12px">${esc(a.label||'Justering')} <span class="mono" style="color:var(--gold)">${a.points>=0?'+':''}${a.points}</span></span><button class="btn btn-danger" style="padding:3px 7px" onclick="App.removeAdjLedger('${a.id}','${pj}')"><i data-lucide="trash-2" style="width:13px;height:13px"></i></button></div>`).join('');
+    this.modal(`
+      <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);flex-shrink:0">
+        <div class="flex items-center gap-2"><button class="btn btn-ghost" style="padding:6px 8px" onclick="App.renderAdmin('overview')"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
+        <div><div class="eyebrow">Poeng-revisjon</div><h2 class="font-display" style="font-weight:800;font-size:19px">${esc(displayName(player))}</h2></div></div>
+        <span class="num-xl hl mono" style="font-size:24px">${fmt(led.total)}</span>
+      </div>
+      <div class="px-5 py-4" style="flex:1;min-height:0;overflow-y:auto">
+        ${catBlocks}
+        <div class="card p-3" style="margin-top:20px;background:var(--surface)">
+          <div class="eyebrow">Legg til / trekk fra poeng</div>
+          <div class="grid grid-cols-3 gap-2" style="margin-top:8px">
+            <input id="alLabel" class="inp" style="grid-column:span 2" placeholder="Etikett (f.eks. Gruppevinner A)">
+            <input id="alPoints" class="inp" type="number" placeholder="±poeng">
+          </div>
+          <button class="btn btn-gold w-full" style="margin-top:8px;justify-content:center" onclick="App.addLedgerAdj('${pj}')"><i data-lucide="plus" style="width:15px;height:15px"></i> Legg til justering</button>
+          ${adjList?`<div style="margin-top:10px">${adjList}</div>`:''}
+        </div>
+      </div>`);
+  },
+  addLedgerAdj(player){
+    const label=document.getElementById('alLabel').value.trim()||'Justering';
+    const points=parseInt(document.getElementById('alPoints').value,10);
+    if(isNaN(points)){ toast('Skriv inn poeng','err'); return; }
+    STATE.adjustments.push({id:'a'+Date.now()+Math.random().toString(36).slice(2,6),player,label,points});
+    saveFasit(); this.renderAll(); this.adminLedger(player); toast('Justering lagt til','ok');
+  },
+  removeAdjLedger(id,player){ STATE.adjustments=STATE.adjustments.filter(a=>a.id!==id); saveFasit(); this.renderAll(); this.adminLedger(player); },
 
   admMatches(){
     const opts=PHASES.map(p=>`<option value="${p.key}">${p.label}</option>`).join('');
