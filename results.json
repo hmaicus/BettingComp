@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-24T10:00:59.478Z",
-  "count": 48,
+  "updatedAt": "2026-06-24T21:16:02.957Z",
+  "count": 50,
   "results": [
     {
       "matchId": 537327,
@@ -207,7 +207,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URU",
+      "awayTla": "URY",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -542,7 +542,7 @@
       "status": "FINISHED",
       "homeName": "Uruguay",
       "awayName": "Cape Verde Islands",
-      "homeTla": "URU",
+      "homeTla": "URY",
       "awayTla": "CPV",
       "homeCode": "Uru",
       "awayCode": "Cab",
@@ -674,6 +674,34 @@
       "awayCode": "DR",
       "home": 1,
       "away": 0
+    },
+    {
+      "matchId": 537337,
+      "utcDate": "2026-06-24T19:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Switzerland",
+      "awayName": "Canada",
+      "homeTla": "SUI",
+      "awayTla": "CAN",
+      "homeCode": "Swi",
+      "awayCode": "Can",
+      "home": 2,
+      "away": 1
+    },
+    {
+      "matchId": 537338,
+      "utcDate": "2026-06-24T19:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Bosnia-Herzegovina",
+      "awayName": "Qatar",
+      "homeTla": "BIH",
+      "awayTla": "QAT",
+      "homeCode": "Bos",
+      "awayCode": "Qat",
+      "home": 3,
+      "away": 1
     }
   ],
   "knockout": [
