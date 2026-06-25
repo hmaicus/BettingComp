@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-25T07:40:54.600Z",
-  "count": 54,
+  "updatedAt": "2026-06-25T08:46:06.175Z",
+  "count": 53,
   "results": [
     {
       "matchId": 537327,
@@ -29,20 +29,6 @@
       "homeCode": "Kor",
       "awayCode": "Cze",
       "home": 2,
-      "away": 1
-    },
-    {
-      "matchId": 537333,
-      "utcDate": "2026-06-12T19:00:00Z",
-      "stage": "GROUP_STAGE",
-      "status": "FINISHED",
-      "homeName": "Canada",
-      "awayName": "Bosnia-Herzegovina",
-      "homeTla": "CAN",
-      "awayTla": "BIH",
-      "homeCode": "Can",
-      "awayCode": "Bos",
-      "home": 1,
       "away": 1
     },
     {
@@ -207,7 +193,7 @@
       "homeName": "Saudi Arabia",
       "awayName": "Uruguay",
       "homeTla": "KSA",
-      "awayTla": "URU",
+      "awayTla": "URY",
       "homeCode": "Sau",
       "awayCode": "Uru",
       "home": 1,
@@ -542,7 +528,7 @@
       "status": "FINISHED",
       "homeName": "Uruguay",
       "awayName": "Cape Verde Islands",
-      "homeTla": "URU",
+      "homeTla": "URY",
       "awayTla": "CPV",
       "homeCode": "Uru",
       "awayCode": "Cab",
@@ -1272,6 +1258,92 @@
       "duration": "REGULAR",
       "winner": null,
       "finished": false
+    }
+  ],
+  "standings": [
+    {
+      "group": "A",
+      "first": "Mex",
+      "second": "Sou",
+      "third": "Kor",
+      "complete": true
+    },
+    {
+      "group": "B",
+      "first": "Swi",
+      "second": "Can",
+      "third": "Bos",
+      "complete": true
+    },
+    {
+      "group": "C",
+      "first": "Bra",
+      "second": "Mor",
+      "third": "Sco",
+      "complete": true
+    },
+    {
+      "group": "D",
+      "first": "USA",
+      "second": "Aus",
+      "third": "Par",
+      "complete": false
+    },
+    {
+      "group": "E",
+      "first": "Ger",
+      "second": "Cot",
+      "third": "Ecu",
+      "complete": false
+    },
+    {
+      "group": "F",
+      "first": "Net",
+      "second": "Jap",
+      "third": "Swe",
+      "complete": false
+    },
+    {
+      "group": "G",
+      "first": "Egy",
+      "second": "Ira",
+      "third": "Bel",
+      "complete": false
+    },
+    {
+      "group": "H",
+      "first": "Spa",
+      "second": "Uru",
+      "third": "Cab",
+      "complete": false
+    },
+    {
+      "group": "I",
+      "first": "Fra",
+      "second": "Nor",
+      "third": "Sen",
+      "complete": false
+    },
+    {
+      "group": "J",
+      "first": "Arg",
+      "second": "Aut",
+      "third": "Alg",
+      "complete": false
+    },
+    {
+      "group": "K",
+      "first": "Col",
+      "second": "Por",
+      "third": "DR",
+      "complete": false
+    },
+    {
+      "group": "L",
+      "first": "Eng",
+      "second": "Gha",
+      "third": "Cro",
+      "complete": false
     }
   ]
 }

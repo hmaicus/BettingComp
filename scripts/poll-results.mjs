@@ -128,6 +128,24 @@ async function fetchAll() {
   return data.matches || [];
 }
 
+// Actual group tables (winner / runner-up / 3rd per group) for group-placement scoring.
+async function fetchStandings() {
+  const url = `https://api.football-data.org/v4/competitions/${encodeURIComponent(CFG.comp)}/standings`;
+  const res = await fetch(url, { headers: { 'X-Auth-Token': CFG.token } });
+  if (!res.ok) return [];
+  const data = await res.json();
+  const groups = (data.standings || []).filter((s) => s.type === 'TOTAL' && s.group);
+  return groups.map((g) => {
+    const t = g.table || [];
+    const at = (pos) => { const r = t.find((x) => x.position === pos); return r ? (TLA_TO_CODE[r.team?.tla] ?? null) : null; };
+    return {
+      group: g.group.replace(/^Group\s+/i, '').trim(),
+      first: at(1), second: at(2), third: at(3),
+      complete: t.length > 0 && t.every((r) => (r.playedGames || 0) >= 3),
+    };
+  });
+}
+
 function toResult(m) {
   const hs = m.score?.fullTime?.home;
   const as = m.score?.fullTime?.away;
@@ -175,6 +193,7 @@ function runHook(r) {
 
 async function pollOnce() {
   const matches = await fetchAll();
+  const standings = await fetchStandings();
   // Group-stage finished results (matched in the app by team code).
   const results = matches
     .filter((m) => m.stage === 'GROUP_STAGE' && m.status === 'FINISHED')
@@ -214,12 +233,11 @@ async function pollOnce() {
 
   // Only rewrite results.json when the actual data changes (not just the
   // timestamp) so the Actions cron commits/redeploys only on real changes.
-  const payload = { results, knockout };
-  const dataJson = JSON.stringify(payload);
+  const dataJson = JSON.stringify({ results, knockout, standings });
   let prevJson = null;
   try {
     const prev = JSON.parse(await readFile(CFG.outFile, 'utf8'));
-    prevJson = JSON.stringify({ results: prev.results || [], knockout: prev.knockout || [] });
+    prevJson = JSON.stringify({ results: prev.results || [], knockout: prev.knockout || [], standings: prev.standings || [] });
   } catch {}
 
   if (dataJson !== prevJson) {
@@ -231,9 +249,10 @@ async function pollOnce() {
         count: results.length,
         results,
         knockout,
+        standings,
       }, null, 2),
     );
-    log(`polled: ${results.length} group finished, ${knockout.length} KO slots, ${fresh.length} new -> wrote ${CFG.outFile}`);
+    log(`polled: ${results.length} group finished, ${knockout.length} KO slots, ${standings.length} groups, ${fresh.length} new -> wrote ${CFG.outFile}`);
   } else {
     log(`polled: ${results.length} group finished, ${knockout.length} KO slots, no changes -> ${CFG.outFile} unchanged`);
   }
