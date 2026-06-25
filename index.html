@@ -171,11 +171,22 @@
         </button>
       </div>
     </div>
-    <nav class="flex items-center gap-7" style="margin-top:2px">
-      <button class="tabbtn active" data-tab="home" onclick="App.tab('home')">Forsiden</button>
-      <button class="tabbtn" data-tab="leaderboard" onclick="App.tab('leaderboard')">Tabell</button>
-      <button class="tabbtn" data-tab="bonus" onclick="App.tab('bonus')">Bonusspørsmål</button>
-      <button class="tabbtn" data-tab="matches" onclick="App.tab('matches')">Kamper</button>
+    <nav class="flex items-center gap-6" style="margin-top:2px;overflow-x:auto">
+      <button class="tabbtn active flex items-center gap-2" data-tab="home" onclick="App.tab('home')" title="Forsiden">
+        <i data-lucide="home" style="width:18px;height:18px"></i><span class="hidden sm:block">Forsiden</span>
+      </button>
+      <button class="tabbtn flex items-center gap-2" data-tab="leaderboard" onclick="App.tab('leaderboard')" title="Tabell">
+        <i data-lucide="list-ordered" style="width:18px;height:18px"></i><span class="hidden sm:block">Tabell</span>
+      </button>
+      <button class="tabbtn flex items-center gap-2" data-tab="groups" onclick="App.tab('groups')" title="Grupper">
+        <i data-lucide="users" style="width:18px;height:18px"></i><span class="hidden sm:block">Grupper</span>
+      </button>
+      <button class="tabbtn flex items-center gap-2" data-tab="bonus" onclick="App.tab('bonus')" title="Bonus">
+        <i data-lucide="star" style="width:18px;height:18px"></i><span class="hidden sm:block">Bonus</span>
+      </button>
+      <button class="tabbtn flex items-center gap-2" data-tab="matches" onclick="App.tab('matches')" title="Kamper">
+        <i data-lucide="calendar-days" style="width:18px;height:18px"></i><span class="hidden sm:block">Kamper</span>
+      </button>
     </nav>
   </div>
 </header>
@@ -185,6 +196,13 @@
   <section id="view-home">
     <div id="homeNext" class="space-y-4 mb-5"></div>
     <div id="homeStats" class="grid sm:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- ===== GROUPS / GRUPPER ===== -->
+  <section id="view-groups" hidden>
+    <h1 class="font-display num-xl" style="font-size:30px">Grupper</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:6px;max-width:52ch">Faktiske gruppetabeller. Når en gruppe er ferdigspilt, trykk på en plassering for å se hvem som tippet riktig.</p>
+    <div id="groupsList" class="grid sm:grid-cols-2 gap-4" style="margin-top:18px"></div>
   </section>
 
   <!-- ===== LEADERBOARD ===== -->
@@ -852,8 +870,9 @@ const App={
   tab(name){
     this.current=name;
     document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
-    ['home','leaderboard','bonus','matches'].forEach(v=>document.getElementById('view-'+v).hidden = v!==name);
+    ['home','leaderboard','groups','bonus','matches'].forEach(v=>document.getElementById('view-'+v).hidden = v!==name);
     if(name==='home') this.renderHome();
+    if(name==='groups') this.renderGroups();
     if(name==='leaderboard') this.renderLeaderboard();
     if(name==='bonus') this.renderBonus();
     if(name==='matches') this.renderMatches();
@@ -864,7 +883,7 @@ const App={
     const resolved=STATE.matches.filter(m=>m.played).length;
     document.getElementById('resolvedCount').textContent=resolved;
     const pc=document.getElementById('playerCount'); if(pc) pc.textContent=STATE.participants.length;
-    this.renderHome(); this.renderLeaderboard(); this.renderBonus(); this.renderMatches();
+    this.renderHome(); this.renderLeaderboard(); this.renderGroups(); this.renderBonus(); this.renderMatches();
   },
 
   /* ---- HOME / FORSIDEN ---- */
@@ -962,6 +981,70 @@ const App={
       <div class="px-5 py-3" style="flex:1;min-height:0;overflow-y:auto">${body}</div>`);
   },
 
+  /* ---- GROUPS / GRUPPER ---- */
+  renderGroups(){
+    const host=document.getElementById('groupsList'); if(!host) return;
+    const st=STATE.standings||{}; const groups=Object.keys(st).sort();
+    if(!groups.length){ host.innerHTML='<p style="color:var(--muted);font-size:14px">Venter på gruppespill-data…</p>'; return; }
+    const sv=STATE.structuralValues||{}; const r32=realityR32();
+    host.innerHTML=groups.map(G=>{
+      const g=st[G]; const locked=!!g.complete; const adv3=g.third!=null && r32.has(g.third);
+      const row=(place,code,pts,extra='')=>{
+        const tap=locked && code;
+        const pos=place==='winner'?1:place==='runnerUp'?2:3;
+        return `<div class="flex items-center justify-between" style="padding:8px 10px;border-radius:10px;background:var(--surface);${tap?'cursor:pointer':''}" ${tap?`onclick="App.openPlacementVoters('${G}','${place}')"`:''}>
+          <div class="flex items-center gap-3"><span class="rank-badge" style="width:24px;height:24px;font-size:12px">${pos}</span>
+          <span style="font-weight:600;font-size:14px">${esc(teamName(code))}</span>${extra}</div>
+          <div class="flex items-center gap-2"><span class="eyebrow">${pts}p</span>${tap?'<i data-lucide="chevron-right" style="width:15px;height:15px;color:var(--muted-2)"></i>':''}</div>
+        </div>`;
+      };
+      return `<div class="card p-4">
+        <div class="flex items-center justify-between" style="margin-bottom:10px">
+          <h3 class="font-display" style="font-weight:800;font-size:18px">Gruppe ${G}</h3>
+          <span class="eyebrow" style="color:${locked?'var(--exact)':'var(--muted-2)'}">${locked?'● låst':'○ foreløpig'}</span></div>
+        <div class="space-y-2">
+          ${row('winner',g.first,sv.groupWinner)}
+          ${row('runnerUp',g.second,sv.groupRunnerUp)}
+          ${row('best3rd',g.third,sv.best3rd, g.third?(adv3?' <span class="eyebrow" style="color:var(--exact)">videre</span>':(r32.size===32?' <span class="eyebrow" style="color:var(--muted-2)">ute</span>':' <span class="eyebrow" style="color:var(--muted-2)">avventer</span>')):'')}
+        </div>
+      </div>`;
+    }).join('');
+    icons();
+  },
+  openPlacementVoters(group,place){
+    const g=(STATE.standings||{})[group]; if(!g||!g.complete) return;
+    const sv=STATE.structuralValues||{};
+    const map={winner:{code:g.first,field:'w',pts:sv.groupWinner,label:'Gruppevinner'},
+               runnerUp:{code:g.second,field:'r',pts:sv.groupRunnerUp,label:'Gruppe-toer'},
+               best3rd:{code:g.third,field:'t',pts:sv.best3rd,label:'Beste 3er'}};
+    const cfg=map[place]; const actual=cfg.code;
+    const r32 = realityR32(); const isR32Drawn = r32.size === 32;
+    const advancedOk = place!=='best3rd' || r32.has(actual);
+    const voters=STATE.participants.filter(p=>{ const gs=(typeof GROUP_SIMS!=='undefined'?GROUP_SIMS[p]:null)||{}; const pred=gs[group]; return pred && pred[cfg.field]===actual; });
+    
+    let subtitle = '';
+    if (voters.length) {
+      if (place === 'best3rd') {
+        if (advancedOk) subtitle = `${voters.length} spillere fikk +${cfg.pts}p for denne plasseringen`;
+        else if (isR32Drawn) subtitle = `${voters.length} spillere tippet dette, men laget gikk ikke videre (0p)`;
+        else subtitle = `${voters.length} spillere traff på plasseringen (avventer avansement for ${cfg.pts}p)`;
+      } else {
+        subtitle = `${voters.length} spillere fikk +${cfg.pts}p for denne plasseringen`;
+      }
+    }
+    
+    const body = voters.length
+      ? `<p style="font-size:12px;color:var(--muted);margin-bottom:8px">${subtitle}</p>`+voters.map(p=>`<div style="padding:7px 0;border-bottom:1px solid var(--border-soft);font-size:14px;font-weight:600">${esc(displayName(p))}</div>`).join('')
+      : `<p style="color:var(--muted);font-size:13px">${place==='best3rd'&&!advancedOk?(isR32Drawn?'Laget gikk ikke videre — ingen poeng for 3.-plass.':'Ingen har tippet dette riktig.'):'Ingen tippet dette riktig.'}</p>`;
+    this.modal(`
+      <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);flex-shrink:0">
+        <div><div class="eyebrow">Gruppe ${group} · ${cfg.label}</div>
+        <h2 class="font-display" style="font-weight:800;font-size:20px;margin-top:2px">${esc(teamName(actual))}</h2></div>
+        <button class="btn btn-ghost" style="padding:8px 10px" onclick="App.closeModal()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+      </div>
+      <div class="px-5 py-3" style="flex:1;min-height:0;overflow-y:auto">${body}</div>`);
+  },
+
   /* ---- LEADERBOARD ---- */
   renderLeaderboard(){
     const arr=ranked();
@@ -1033,6 +1116,55 @@ const App={
         <span style="font-size:13px">${esc(a.label||'Justering')}</span>
         <span class="pts-pill hl">${a.points>=0?'+':''}${fmt(a.points)}</span></div>`).join('');
 
+    // group placements
+    const gs=(typeof GROUP_SIMS!=='undefined'?GROUP_SIMS[player]:null)||{};
+    const hasGroups = Object.keys(gs).length > 0;
+    const r32 = realityR32(); const isR32Drawn = r32.size === 32;
+    const groupRows = !hasGroups ? '<p style="color:var(--muted);font-size:13px">Ingen gruppetips registrert.</p>' :
+      Object.keys(gs).sort().map(G => {
+        const pred = gs[G]; const act = (STATE.standings||{})[G];
+        const sv = STATE.structuralValues||{};
+        const renderPl = (place, label, pCode, actCode, ptsCfg) => {
+           if (!pCode) return '';
+           let right = '<span class="eyebrow">venter</span>';
+           let border = 'var(--border-soft)';
+           let pts = 0;
+           if (act && act.complete) {
+              let hit = pCode === actCode;
+              if (place === 't') {
+                 const advancedOk = r32.has(actCode);
+                 if (hit) {
+                   if (advancedOk) { pts = ptsCfg; right = `<span class="pts-pill tier-exact" style="font-size:13px">+${pts}</span>`; border = 'var(--exact)'; }
+                   else if (isR32Drawn) { right = `<span class="pts-pill tier-miss" style="font-size:13px">0</span>`; border = 'var(--outcome)'; }
+                   else { right = '<span class="eyebrow">avventer avansement</span>'; }
+                 } else {
+                   right = `<span class="pts-pill tier-miss" style="font-size:13px">0</span>`; border = 'var(--outcome)';
+                 }
+              } else {
+                 if (hit) { pts = ptsCfg; right = `<span class="pts-pill tier-exact" style="font-size:13px">+${pts}</span>`; border = 'var(--exact)'; }
+                 else { right = `<span class="pts-pill tier-miss" style="font-size:13px">0</span>`; border = 'var(--outcome)'; }
+              }
+           }
+           const actTxt = act && act.complete && actCode ? esc(teamName(actCode)) : '· · ·';
+           return `<div class="flex items-center gap-2 px-3 py-2 rounded-lg" style="border:1px solid var(--border-soft);border-left:3px solid ${border}">
+              <div style="flex:1;min-width:0">
+                <div style="font-size:11px;color:var(--muted-2)">Gruppe ${G} · ${label}</div>
+                <div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600">${esc(teamName(pCode))}</div>
+              </div>
+              <i data-lucide="arrow-right" style="width:13px;height:13px;color:var(--muted-2)"></i>
+              <div style="flex:1;min-width:0;text-align:right">
+                <div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" class="${act&&act.complete&&pCode!==actCode?'actual':''}">${actTxt}</div>
+              </div>
+              <div style="text-align:right;white-space:nowrap;font-size:12px;min-width:40px">${right}</div>
+           </div>`;
+        };
+        const wRow = renderPl('w', 'Vinner', pred.w, act?act.first:null, sv.groupWinner);
+        const rRow = renderPl('r', '2. plass', pred.r, act?act.second:null, sv.groupRunnerUp);
+        const tRow = renderPl('t', 'Beste 3er', pred.t, act?act.third:null, sv.best3rd);
+        if (!wRow && !rRow && !tRow) return '';
+        return `<div class="space-y-1 mb-3">${wRow}${rRow}${tRow}</div>`;
+      }).join('');
+
     // knockout bracket — player's simulated teams, green/red vs reality, gated points
     const hasKO = typeof KO_SIMS!=='undefined' && !!KO_SIMS[player];
     const koRows = !hasKO ? '<p style="color:var(--muted);font-size:13px">Ingen sluttspilltips registrert.</p>' :
@@ -1079,13 +1211,15 @@ const App={
         </div>
       </div>
       <div class="seg mx-5 my-4" id="pmSeg">
-        <button class="on" onclick="App.pmTab('match',this)">Kamper</button>
-        <button onclick="App.pmTab('bracket',this)">Sluttspill</button>
-        <button onclick="App.pmTab('bonus',this)">Bonus</button>
-        ${adjRows?'<button onclick="App.pmTab(\'adj\',this)">Justeringer</button>':''}
+        <button class="on flex items-center justify-center gap-2" onclick="App.pmTab('match',this)" title="Kamper"><i data-lucide="calendar-days" style="width:15px;height:15px"></i><span class="hidden sm:block">Kamper</span></button>
+        <button class="flex items-center justify-center gap-2" onclick="App.pmTab('group',this)" title="Grupper"><i data-lucide="users" style="width:15px;height:15px"></i><span class="hidden sm:block">Grupper</span></button>
+        <button class="flex items-center justify-center gap-2" onclick="App.pmTab('bracket',this)" title="Sluttspill"><i data-lucide="git-merge" style="width:15px;height:15px"></i><span class="hidden sm:block">Sluttspill</span></button>
+        <button class="flex items-center justify-center gap-2" onclick="App.pmTab('bonus',this)" title="Bonus"><i data-lucide="star" style="width:15px;height:15px"></i><span class="hidden sm:block">Bonus</span></button>
+        ${adjRows?'<button class="flex items-center justify-center gap-2" onclick="App.pmTab(\'adj\',this)" title="Justeringer"><i data-lucide="sliders" style="width:15px;height:15px"></i><span class="hidden sm:block">Justeringer</span></button>':''}
       </div>
       <div class="px-5 pb-5 space-y-2" style="overflow-y:auto">
         <div id="pm-match" class="space-y-2">${rows}</div>
+        <div id="pm-group" hidden>${groupRows}</div>
         <div id="pm-bracket" hidden>${koRows}</div>
         <div id="pm-bonus" class="space-y-2" hidden>${bonusRows}</div>
         <div id="pm-adj" class="space-y-2" hidden>${adjRows||'<p style="color:var(--muted);font-size:13px">Ingen justeringer.</p>'}</div>
@@ -1094,7 +1228,7 @@ const App={
   },
   pmTab(which,btn){
     document.querySelectorAll('#pmSeg button').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
-    ['match','bracket','bonus','adj'].forEach(t=>{const e=document.getElementById('pm-'+t); if(e)e.hidden=t!==which;});
+    ['match','group','bracket','bonus','adj'].forEach(t=>{const e=document.getElementById('pm-'+t); if(e)e.hidden=t!==which;});
   },
 
   /* ---- BONUS VIEW ---- */
