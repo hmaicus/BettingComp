@@ -595,7 +595,7 @@ function computeScores(){
   for(const m of STATE.matches){
     const ko=isKO(m);
     for(const p of STATE.participants){
-      const r = ko ? scoreKO(koSimFor(p,m.id), m) : scoreMatch((STATE.predictions[p]||{})[m.id], m);
+      const r = ko ? scoreKO(koPredFor(p,m), m) : scoreMatch((STATE.predictions[p]||{})[m.id], m);
       if(['exact','gd','outcome','miss'].includes(r.tier)){ out[p][r.tier]++; }
       if(r.pts){ out[p].match+=r.pts; if(ko) out[p].ko+=r.pts; }
     }
@@ -627,6 +627,19 @@ function ranked(){
   return arr;
 }
 
+// reality KO match (teams known) with a given unordered code pair, within a phase
+function realityKOMatch(phase,a,b){
+  if(a==null||b==null) return null; const key=[a,b].sort().join('|');
+  return STATE.matches.find(m=>m.phase===phase && m.home!=null && m.away!=null && [m.home,m.away].sort().join('|')===key)||null;
+}
+// the player's prediction for a reality KO match's MATCHUP (any slot of that phase) — the
+// matchup-based key for all KO scoring, so slot↔fixture order is irrelevant.
+function koPredFor(player,m){
+  if(m.home==null||m.away==null) return null; const key=[m.home,m.away].sort().join('|');
+  for(const pm of STATE.matches){ if(pm.phase!==m.phase) continue; const s=koSimFor(player,pm.id); if(s&&s.h!=null&&[s.h,s.a].sort().join('|')===key) return s; }
+  return null;
+}
+
 // Knockout structural rewards (team advancement per stage, correct bracket pairing,
 // correct match winner) — computed from KO_SIMS vs reality (results.json). Shared by
 // pointsLedger + computeScores so totals never diverge. All zero until KO teams resolve.
@@ -644,12 +657,12 @@ function koStructural(player){
     for(const m of STATE.matches){ if(m.phase!==S) continue; const sim=koSimFor(player,m.id); if(sim){ if(sim.h)mine.add(sim.h); if(sim.a)mine.add(sim.a); } }
     for(const t of mine){ if(reached[S].has(t)){ advPts+=qStage[S]; adv.push({label:`${teamName(t)} → ${stLabel(S)}`, pts:qStage[S]}); } }
   }
+  // pairing + kampvinner: matchup-based — your two predicted teams actually meet in this
+  // round (any slot), and (for kampvinner) you called the winner.
   const pair=[],win=[]; let pairPts=0,winPts=0;
   const bp=sv.bracket||0, mw=sv.matchWinner||0;
   for(const m of STATE.matches){ if(!isKO(m)||m.home==null||m.away==null) continue;
-    const sim=koSimFor(player,m.id); if(!sim||sim.h==null) continue;
-    const teamsOk=(sim.h===m.home&&sim.a===m.away)||(sim.h===m.away&&sim.a===m.home);
-    if(!teamsOk) continue;
+    const sim=koPredFor(player,m); if(!sim) continue;
     if(bp){ pairPts+=bp; pair.push({label:`${teamName(m.home)}–${teamName(m.away)}`, pts:bp}); }
     if(mw && m.winner && koWinner(sim)===m.winner){ winPts+=mw; win.push({label:`${teamName(m.winner)} vinner`, pts:mw}); }
   }
@@ -709,7 +722,7 @@ function pointsLedger(player){
   const sums={group:0,gplace:0,ko:0,adv:0,pair:0,win:0,outcome:0,bonus:0,adj:0};
   for(const m of STATE.matches){
     if(isKO(m)){
-      const sim=koSimFor(player,m.id); const r=scoreKO(sim,m);
+      const sim=koPredFor(player,m); const r=scoreKO(sim,m);
       if(r.pts){ sums.ko+=r.pts; cats.ko.push({label:`${teamName(m.home)}–${teamName(m.away)}`, detail:sim?`${sim.ph}-${sim.pa} → ${m.ah}-${m.aa}`:'', pts:r.pts}); }
     } else {
       const pred=(STATE.predictions[player]||{})[m.id]; const r=scoreMatch(pred,m);
@@ -770,11 +783,14 @@ function groupMatchStats(m){
 function koWinner(sim){ if(!sim) return null; if(sim.ph>sim.pa) return sim.h; if(sim.pa>sim.ph) return sim.a; if(sim.pso) return sim.pso[0]>sim.pso[1]?sim.h:sim.a; return null; }
 function koMatchStats(m){
   let n=0,matchup=0,advHome=0,advAway=0,reachHome=0,reachAway=0;
-  for(const p of STATE.participants){ const sim=koSimFor(p,m.id); if(!sim||sim.h==null) continue; n++;
-    if(sim.h===m.home||sim.a===m.home) reachHome++;
-    if(sim.h===m.away||sim.a===m.away) reachAway++;
-    if((sim.h===m.home&&sim.a===m.away)||(sim.h===m.away&&sim.a===m.home)){ matchup++;
-      const w=koWinner(sim); if(w===m.home) advHome++; else if(w===m.away) advAway++; }
+  const phaseMatches=STATE.matches.filter(x=>x.phase===m.phase);
+  for(const p of STATE.participants){
+    let hasHome=false,hasAway=false,any=false;
+    for(const pm of phaseMatches){ const s=koSimFor(p,pm.id); if(!s||s.h==null) continue; any=true;
+      if(s.h===m.home||s.a===m.home) hasHome=true; if(s.h===m.away||s.a===m.away) hasAway=true; }
+    if(any) n++; if(hasHome) reachHome++; if(hasAway) reachAway++;
+    const sim=koPredFor(p,m); // predicted this matchup (any slot of the round)
+    if(sim){ matchup++; const w=koWinner(sim); if(w===m.home) advHome++; else if(w===m.away) advAway++; }
   }
   return {n,matchup,advHome,advAway,reachHome,reachAway};
 }
@@ -926,14 +942,16 @@ const App={
           <div style="font-size:12px;color:var(--muted);margin-top:4px">${players.map(p=>esc(displayName(p))).join(', ')}</div>
         </div>`).join(''):'<p style="color:var(--muted);font-size:13px">Ingen tips.</p>';
     } else {
-      const rows=STATE.participants.map(p=>{ const sim=koSimFor(p,id); if(!sim||sim.h==null) return null; const r=scoreKO(sim,m); return {p,sim,r}; })
-        .filter(Boolean).sort((a,b)=>(b.r.teamsOk?1:0)-(a.r.teamsOk?1:0) || a.p.localeCompare(b.p));
-      body=rows.length?rows.map(({p,sim,r})=>`
-        <div class="flex items-center justify-between gap-3" style="padding:8px 0;border-bottom:1px solid var(--border-soft);${r.teamsOk?'background:var(--exact-bg)':''}">
-          <div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(displayName(p))}</div>
-          <div style="font-size:12px;color:var(--muted)">${esc(teamName(sim.h))} <b>${sim.ph}-${sim.pa}</b> ${esc(teamName(sim.a))}</div></div>
-          ${r.tier!=='noteams'?`<span class="eyebrow" style="white-space:nowrap;color:${r.teamsOk?'var(--exact)':'var(--outcome)'}">${r.teamsOk?'lag ✓':'feil lag'}</span>`:''}
-        </div>`).join(''):'<p style="color:var(--muted);font-size:13px">Ingen har simulert denne kampen.</p>';
+      // matchup-based: players who predicted these two teams to meet in this round
+      const groups={};
+      for(const p of STATE.participants){ const sim=koPredFor(p,m); if(!sim) continue; const k=`${sim.ph}–${sim.pa}`; (groups[k]=groups[k]||[]).push(p); }
+      const total=Object.values(groups).reduce((s,a)=>s+a.length,0);
+      const entries=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length || a[0].localeCompare(b[0]));
+      body=entries.length?`<p style="font-size:12px;color:var(--muted);margin-bottom:8px">${total} spillere fikk denne kampen i bracketen</p>`+entries.map(([score,players])=>`
+        <div style="padding:9px 0;border-bottom:1px solid var(--border-soft)">
+          <div class="flex items-center justify-between"><span class="mono" style="font-weight:800;font-size:15px">${score}</span><span class="pts-pill">${players.length}</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">${players.map(p=>esc(displayName(p))).join(', ')}</div>
+        </div>`).join(''):'<p style="color:var(--muted);font-size:13px">Ingen simulerte denne kampen.</p>';
     }
     this.modal(`
       <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);flex-shrink:0">
@@ -1022,18 +1040,19 @@ const App={
         const ms=STATE.matches.filter(m=>m.phase===phase).sort((a,b)=>a.id-b.id);
         if(!ms.length) return '';
         const label=(PHASES.find(p=>p.key===phase)||{}).label||phase;
+        const phaseResolved=ms.every(x=>x.home!=null&&x.away!=null);
         const items=ms.map(m=>{
-          const sim=koSimFor(player,m.id); const r=scoreKO(sim,m);
+          const sim=koSimFor(player,m.id);
           const pso=sim&&sim.pso?` <span style="color:var(--muted-2)">str ${sim.pso[0]}-${sim.pso[1]}</span>`:'';
           const simTxt=sim?`${esc(teamName(sim.h))} <b>${sim.ph}-${sim.pa}</b> ${esc(teamName(sim.a))}${pso}`:'<span style="color:var(--muted)">—</span>';
-          const border=r.teamsOk?'var(--exact)':(r.tier==='wrongteams'?'var(--outcome)':'var(--border-soft)');
-          const realKnown=m.home!=null&&m.away!=null;
-          const right = !realKnown ? '<span class="eyebrow">venter</span>'
-            : m.played ? `<span class="score-chip actual">${m.ah}-${m.aa}</span> <span class="pts-pill ${r.pts?'tier-exact':'tier-miss'}" style="font-size:13px">${r.pts?'+'+r.pts:'0'}</span>`
-            : (r.teamsOk?'<span class="eyebrow" style="color:var(--exact)">lag ✓</span>':'<span class="eyebrow" style="color:var(--outcome)">feil lag</span>');
-          const realLine=(realKnown&&!r.teamsOk)?`<div class="eyebrow" style="font-size:9px;margin-top:2px;color:var(--outcome)">faktisk: ${esc(teamName(m.home))}–${esc(teamName(m.away))}</div>`:'';
+          // matchup-based: did the two predicted teams actually meet in this round?
+          const realM=sim?realityKOMatch(phase,sim.h,sim.a):null; const r=realM?scoreKO(sim,realM):{pts:0};
+          const border=realM?'var(--exact)':(phaseResolved?'var(--outcome)':'var(--border-soft)');
+          const right = realM
+            ? (realM.played?`<span class="score-chip actual">${realM.ah}-${realM.aa}</span> <span class="pts-pill ${r.pts?'tier-exact':'tier-miss'}" style="font-size:13px">${r.pts?'+'+r.pts:'0'}</span>`:'<span class="eyebrow" style="color:var(--exact)">møtes ✓</span>')
+            : (phaseResolved?'<span class="eyebrow" style="color:var(--outcome)">møttes ikke</span>':'<span class="eyebrow">venter</span>');
           return `<div class="flex items-center gap-2 px-3 py-2 rounded-lg" style="border:1px solid var(--border-soft);border-left:3px solid ${border}">
-            <div style="flex:1;min-width:0"><div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${simTxt}</div>${realLine}</div>
+            <div style="flex:1;min-width:0"><div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${simTxt}</div></div>
             <div style="text-align:right;white-space:nowrap;font-size:12px">${right}</div></div>`;
         }).join('');
         return `<div class="eyebrow" style="margin:12px 0 5px">${label}</div><div class="space-y-2">${items}</div>`;
