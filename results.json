@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-25T21:20:18.548Z",
-  "count": 54,
+  "updatedAt": "2026-06-25T23:06:22.064Z",
+  "count": 56,
   "results": [
     {
       "matchId": 537327,
@@ -758,6 +758,34 @@
       "awayCode": "Kor",
       "home": 1,
       "away": 0
+    },
+    {
+      "matchId": 537355,
+      "utcDate": "2026-06-25T20:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Ecuador",
+      "awayName": "Germany",
+      "homeTla": "ECU",
+      "awayTla": "GER",
+      "homeCode": "Ecu",
+      "awayCode": "Ger",
+      "home": 2,
+      "away": 1
+    },
+    {
+      "matchId": 537356,
+      "utcDate": "2026-06-25T20:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Curaçao",
+      "awayName": "Ivory Coast",
+      "homeTla": "CUW",
+      "awayTla": "CIV",
+      "homeCode": "Cur",
+      "awayCode": "Cot",
+      "home": 0,
+      "away": 2
     }
   ],
   "knockout": [
@@ -1315,7 +1343,7 @@
       "first": "Net",
       "second": "Jap",
       "third": "Swe",
-      "complete": false
+      "complete": true
     },
     {
       "group": "G",
