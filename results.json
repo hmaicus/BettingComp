@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-26T07:50:53.091Z",
+  "updatedAt": "2026-06-26T19:26:56.526Z",
   "count": 60,
   "results": [
     {
@@ -1420,7 +1420,7 @@
       "first": "Fra",
       "second": "Nor",
       "third": "Sen",
-      "complete": false
+      "complete": true
     },
     {
       "group": "J",
