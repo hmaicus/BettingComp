@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-27T02:54:20.864Z",
-  "count": 64,
+  "updatedAt": "2026-06-27T06:28:42.854Z",
+  "count": 66,
   "results": [
     {
       "matchId": 537327,
@@ -898,6 +898,34 @@
       "awayCode": "Sau",
       "home": 0,
       "away": 0
+    },
+    {
+      "matchId": 537367,
+      "utcDate": "2026-06-27T03:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "New Zealand",
+      "awayName": "Belgium",
+      "homeTla": "NZL",
+      "awayTla": "BEL",
+      "homeCode": "New",
+      "awayCode": "Bel",
+      "home": 1,
+      "away": 5
+    },
+    {
+      "matchId": 537368,
+      "utcDate": "2026-06-27T03:00:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Egypt",
+      "awayName": "Iran",
+      "homeTla": "EGY",
+      "awayTla": "IRN",
+      "homeCode": "Egy",
+      "awayCode": "Ira",
+      "home": 1,
+      "away": 1
     }
   ],
   "knockout": [
@@ -969,11 +997,11 @@
       "fdId": 537424,
       "stage": "LAST_32",
       "date": "2026-06-30T17:00:00Z",
-      "home": null,
+      "home": "Cot",
       "away": null,
-      "homeName": null,
+      "homeName": "Ivory Coast",
       "awayName": null,
-      "homeTla": null,
+      "homeTla": "CIV",
       "awayTla": null,
       "ah": null,
       "aa": null,
@@ -1459,10 +1487,10 @@
     },
     {
       "group": "G",
-      "first": "Egy",
-      "second": "Ira",
-      "third": "Bel",
-      "complete": false
+      "first": "Bel",
+      "second": "Egy",
+      "third": "Ira",
+      "complete": true
     },
     {
       "group": "H",
