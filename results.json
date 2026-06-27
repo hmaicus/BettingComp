@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-26T21:11:51.546Z",
+  "updatedAt": "2026-06-27T00:04:10.483Z",
   "count": 62,
   "results": [
     {
@@ -1441,7 +1441,7 @@
       "first": "Spa",
       "second": "Uru",
       "third": "Cab",
-      "complete": false
+      "complete": true
     },
     {
       "group": "I",
