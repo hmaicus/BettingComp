@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-27T20:48:13.056Z",
+  "updatedAt": "2026-06-27T21:52:32.814Z",
   "count": 66,
   "results": [
     {
@@ -1525,7 +1525,7 @@
       "first": "Eng",
       "second": "Gha",
       "third": "Cro",
-      "complete": false
+      "complete": true
     }
   ]
 }
