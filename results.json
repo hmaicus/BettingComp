@@ -1,7 +1,7 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-27T23:52:22.464Z",
-  "count": 68,
+  "updatedAt": "2026-06-28T03:37:04.619Z",
+  "count": 70,
   "results": [
     {
       "matchId": 537327,
@@ -954,6 +954,34 @@
       "awayCode": "Gha",
       "home": 2,
       "away": 1
+    },
+    {
+      "matchId": 537407,
+      "utcDate": "2026-06-27T23:30:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Colombia",
+      "awayName": "Portugal",
+      "homeTla": "COL",
+      "awayTla": "POR",
+      "homeCode": "Col",
+      "awayCode": "Por",
+      "home": 0,
+      "away": 0
+    },
+    {
+      "matchId": 537408,
+      "utcDate": "2026-06-27T23:30:00Z",
+      "stage": "GROUP_STAGE",
+      "status": "FINISHED",
+      "homeName": "Congo DR",
+      "awayName": "Uzbekistan",
+      "homeTla": "COD",
+      "awayTla": "UZB",
+      "homeCode": "DR",
+      "awayCode": "Uzb",
+      "home": 3,
+      "away": 1
     }
   ],
   "knockout": [
@@ -1539,7 +1567,7 @@
       "first": "Arg",
       "second": "Aut",
       "third": "Alg",
-      "complete": false
+      "complete": true
     },
     {
       "group": "K",
