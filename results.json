@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-28T20:15:37.246Z",
+  "updatedAt": "2026-06-28T21:52:44.841Z",
   "count": 72,
   "results": [
     {
@@ -1024,10 +1024,10 @@
       "homeTla": "RSA",
       "awayTla": "CAN",
       "ah": 0,
-      "aa": 0,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Can",
+      "finished": true
     },
     {
       "fdId": 537423,
