@@ -588,14 +588,17 @@ function gradeBonus(answer, correct, type){
   if(correct===undefined || correct===null || correct==='') return false;
   if(type==='number'){ const a=extractInt(answer),c=extractInt(correct); return a!==null&&c!==null&&a===c; }
   if(type==='yesno'){ const a=yesno(answer),c=yesno(correct); return a!==null&&c!==null&&a===c; }
-  // player / country / text : token-aware contains, both directions
-  const a=deburr(answer), c=deburr(correct);
-  if(!a||!c) return false;
-  if(a===c) return true;
-  if(a.includes(c)||c.includes(a)) return true;
-  // last-token surname match for players
-  const at=a.split(' '), ct=c.split(' ');
-  return at[at.length-1]===ct[ct.length-1] && at[at.length-1].length>2;
+  // player / country / text. The correct answer may list several acceptable answers
+  // (a tie, e.g. "Frankrike, Tyskland, Nederland") — award if the pick matches ANY.
+  const a=deburr(answer); if(!a) return false;
+  const matchOne=(cRaw)=>{
+    const c=deburr(cRaw); if(!c) return false;
+    if(a===c) return true;
+    if(a.includes(c)||c.includes(a)) return true;
+    const at=a.split(' '), ct=c.split(' '); // last-token surname match for players
+    return at[at.length-1]===ct[ct.length-1] && at[at.length-1].length>2;
+  };
+  return String(correct).split(/\s*,\s*|\s*\/\s*|\s+og\s+|\s+and\s+/i).map(s=>s.trim()).filter(Boolean).some(matchOne);
 }
 // is a bonus question awarded for a player
 function bonusAwarded(b, player){
