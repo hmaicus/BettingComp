@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-28T21:52:44.841Z",
+  "updatedAt": "2026-06-29T08:57:11.817Z",
   "count": 72,
   "results": [
     {
@@ -1273,11 +1273,11 @@
       "fdId": 537376,
       "stage": "LAST_16",
       "date": "2026-07-04T17:00:00Z",
-      "home": null,
+      "home": "Can",
       "away": null,
-      "homeName": null,
+      "homeName": "Canada",
       "awayName": null,
-      "homeTla": null,
+      "homeTla": "CAN",
       "awayTla": null,
       "ah": null,
       "aa": null,
