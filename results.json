@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-29T21:15:48.036Z",
+  "updatedAt": "2026-06-29T22:44:56.102Z",
   "count": 72,
   "results": [
     {
@@ -1055,9 +1055,9 @@
       "awayName": "Paraguay",
       "homeTla": "GER",
       "awayTla": "PAR",
-      "ah": 0,
-      "aa": 0,
-      "duration": "REGULAR",
+      "ah": 1,
+      "aa": 1,
+      "duration": "EXTRA_TIME",
       "winner": null,
       "finished": false
     },
