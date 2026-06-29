@@ -289,7 +289,7 @@ const STRUCTURAL = [
   ['groupWinner','Gruppevinner riktig',24],
   ['groupRunnerUp','Gruppe-toer riktig',12],
   ['best3rd','8 beste treere',8],
-  ['qualifiedBase','Kvalifiserte lag (base)',8],
+  ['qualifiedBase','Kvalifiserte lag (base)',0],
   ['qR32','Lag videre til R32 (per lag)',2],
   ['qR16','Lag videre til R16 (per lag)',3],
   ['qQF','Lag videre til kvartfinale (per lag)',4],
@@ -701,10 +701,8 @@ function groupPlacement(player){
     if(sv.groupRunnerUp && pred.r && pred.r===act.second){ pts+=sv.groupRunnerUp; items.push({label:`Gruppe ${G}: 2er ${teamName(pred.r)}`, pts:sv.groupRunnerUp}); }
     if(sv.best3rd && pred.t && pred.t===act.third && r32.has(act.third)){ pts+=sv.best3rd; items.push({label:`Gruppe ${G}: 3er videre ${teamName(pred.t)}`, pts:sv.best3rd}); }
   }
-  if(sv.qualifiedBase){
-    const preds=new Set(); for(const G of Object.keys(gs)){ [gs[G].w,gs[G].r,gs[G].t].forEach(c=>{if(c)preds.add(c);}); }
-    for(const t of preds){ if(r32.has(t)){ pts+=sv.qualifiedBase; items.push({label:`Kvalifisert: ${teamName(t)}`, pts:sv.qualifiedBase}); } }
-  }
+  // NOTE: qualifiedBase (flat +pts per qualified team) is intentionally NOT awarded —
+  // admin scoring uses only placement + per-stage advancement (Lag videre qR32..qFinal).
   return {points:pts, items};
 }
 // Tournament outcome: champion / runner-up / third (exact only).
