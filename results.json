@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-29T22:44:56.102Z",
+  "updatedAt": "2026-06-29T23:52:10.936Z",
   "count": 72,
   "results": [
     {
@@ -1055,11 +1055,11 @@
       "awayName": "Paraguay",
       "homeTla": "GER",
       "awayTla": "PAR",
-      "ah": 1,
-      "aa": 1,
-      "duration": "EXTRA_TIME",
+      "ah": 5,
+      "aa": 6,
+      "duration": "PENALTY_SHOOTOUT",
       "winner": null,
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537418,
