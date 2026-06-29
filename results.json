@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-29T08:57:11.817Z",
+  "updatedAt": "2026-06-29T19:40:51.076Z",
   "count": 72,
   "results": [
     {
@@ -1039,11 +1039,11 @@
       "awayName": "Japan",
       "homeTla": "BRA",
       "awayTla": "JPN",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Bra",
+      "finished": true
     },
     {
       "fdId": 537415,
