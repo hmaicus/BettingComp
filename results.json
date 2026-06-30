@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-29T23:52:10.936Z",
+  "updatedAt": "2026-06-30T03:29:25.835Z",
   "count": 72,
   "results": [
     {
@@ -1055,8 +1055,8 @@
       "awayName": "Paraguay",
       "homeTla": "GER",
       "awayTla": "PAR",
-      "ah": 5,
-      "aa": 6,
+      "ah": 4,
+      "aa": 5,
       "duration": "PENALTY_SHOOTOUT",
       "winner": null,
       "finished": true
@@ -1071,9 +1071,9 @@
       "awayName": "Morocco",
       "homeTla": "NED",
       "awayTla": "MAR",
-      "ah": null,
-      "aa": null,
-      "duration": "REGULAR",
+      "ah": 1,
+      "aa": 1,
+      "duration": "EXTRA_TIME",
       "winner": null,
       "finished": false
     },
