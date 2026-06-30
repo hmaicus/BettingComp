@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-30T21:21:52.402Z",
+  "updatedAt": "2026-06-30T23:02:04.592Z",
   "count": 72,
   "results": [
     {
@@ -1103,11 +1103,11 @@
       "awayName": "Sweden",
       "homeTla": "FRA",
       "awayTla": "SWE",
-      "ah": 0,
+      "ah": 3,
       "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Fra",
+      "finished": true
     },
     {
       "fdId": 537425,
