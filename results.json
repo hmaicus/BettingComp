@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-30T07:52:23.178Z",
+  "updatedAt": "2026-06-30T19:29:44.209Z",
   "count": 72,
   "results": [
     {
@@ -1087,11 +1087,11 @@
       "awayName": "Norway",
       "homeTla": "CIV",
       "awayTla": "NOR",
-      "ah": null,
-      "aa": null,
+      "ah": 1,
+      "aa": 2,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Nor",
+      "finished": true
     },
     {
       "fdId": 537416,
