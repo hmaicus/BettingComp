@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-01T08:10:50.796Z",
+  "updatedAt": "2026-07-01T19:27:54.678Z",
   "count": 72,
   "results": [
     {
@@ -1135,11 +1135,11 @@
       "awayName": "Congo DR",
       "homeTla": "ENG",
       "awayTla": "COD",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Eng",
+      "finished": true
     },
     {
       "fdId": 537422,
