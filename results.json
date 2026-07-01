@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-01T03:38:16.824Z",
+  "updatedAt": "2026-07-01T08:10:50.796Z",
   "count": 72,
   "results": [
     {
@@ -1123,7 +1123,7 @@
       "aa": 0,
       "duration": "REGULAR",
       "winner": "Mex",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537426,
@@ -1290,11 +1290,11 @@
       "stage": "LAST_16",
       "date": "2026-07-04T21:00:00Z",
       "home": "Par",
-      "away": null,
+      "away": "Fra",
       "homeName": "Paraguay",
-      "awayName": null,
+      "awayName": "France",
       "homeTla": "PAR",
-      "awayTla": null,
+      "awayTla": "FRA",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
@@ -1306,11 +1306,11 @@
       "stage": "LAST_16",
       "date": "2026-07-05T20:00:00Z",
       "home": "Bra",
-      "away": null,
+      "away": "Nor",
       "homeName": "Brazil",
-      "awayName": null,
+      "awayName": "Norway",
       "homeTla": "BRA",
-      "awayTla": null,
+      "awayTla": "NOR",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
