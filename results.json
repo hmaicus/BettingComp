@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-01T21:15:40.957Z",
+  "updatedAt": "2026-07-01T23:00:47.180Z",
   "count": 72,
   "results": [
     {
@@ -1151,11 +1151,11 @@
       "awayName": "Senegal",
       "homeTla": "BEL",
       "awayTla": "SEN",
-      "ah": 0,
-      "aa": 1,
+      "ah": 3,
+      "aa": 2,
       "duration": "REGULAR",
-      "winner": "Sen",
-      "finished": false
+      "winner": "Bel",
+      "finished": true
     },
     {
       "fdId": 537421,
