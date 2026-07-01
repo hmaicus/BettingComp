@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-06-30T23:02:04.592Z",
+  "updatedAt": "2026-07-01T03:38:16.824Z",
   "count": 72,
   "results": [
     {
@@ -1119,10 +1119,10 @@
       "awayName": "Ecuador",
       "homeTla": "MEX",
       "awayTla": "ECU",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Mex",
       "finished": false
     },
     {
