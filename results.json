@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-01T19:27:54.678Z",
+  "updatedAt": "2026-07-01T21:15:40.957Z",
   "count": 72,
   "results": [
     {
@@ -1151,10 +1151,10 @@
       "awayName": "Senegal",
       "homeTla": "BEL",
       "awayTla": "SEN",
-      "ah": null,
-      "aa": null,
+      "ah": 0,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Sen",
       "finished": false
     },
     {
