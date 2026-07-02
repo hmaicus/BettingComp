@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-01T23:00:47.180Z",
+  "updatedAt": "2026-07-02T03:23:36.648Z",
   "count": 72,
   "results": [
     {
@@ -1153,7 +1153,7 @@
       "awayTla": "SEN",
       "ah": 3,
       "aa": 2,
-      "duration": "REGULAR",
+      "duration": "EXTRA_TIME",
       "winner": "Bel",
       "finished": true
     },
@@ -1167,11 +1167,11 @@
       "awayName": "Bosnia-Herzegovina",
       "homeTla": "USA",
       "awayTla": "BIH",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "USA",
+      "finished": true
     },
     {
       "fdId": 537420,
