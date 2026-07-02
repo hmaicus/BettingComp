@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-02T07:29:43.156Z",
+  "updatedAt": "2026-07-02T20:51:40.500Z",
   "count": 72,
   "results": [
     {
@@ -1183,10 +1183,10 @@
       "awayName": "Austria",
       "homeTla": "ESP",
       "awayTla": "AUT",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Spa",
       "finished": false
     },
     {
