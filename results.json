@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T22:53:17.611Z",
+  "updatedAt": "2026-07-03T23:55:10.875Z",
   "count": 72,
   "results": [
     {
@@ -1248,9 +1248,9 @@
       "homeTla": "ARG",
       "awayTla": "CPV",
       "ah": 1,
-      "aa": 0,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": "Arg",
+      "winner": null,
       "finished": false
     },
     {
