@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T20:13:50.168Z",
+  "updatedAt": "2026-07-03T21:55:10.471Z",
   "count": 72,
   "results": [
     {
@@ -1231,11 +1231,11 @@
       "awayName": "Egypt",
       "homeTla": "AUS",
       "awayTla": "EGY",
-      "ah": 1,
-      "aa": 1,
-      "duration": "EXTRA_TIME",
+      "ah": 3,
+      "aa": 5,
+      "duration": "PENALTY_SHOOTOUT",
       "winner": null,
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537427,
