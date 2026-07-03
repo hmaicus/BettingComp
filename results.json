@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T21:55:10.471Z",
+  "updatedAt": "2026-07-03T22:53:17.611Z",
   "count": 72,
   "results": [
     {
@@ -1247,10 +1247,10 @@
       "awayName": "Cape Verde Islands",
       "homeTla": "ARG",
       "awayTla": "CPV",
-      "ah": null,
-      "aa": null,
+      "ah": 1,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Arg",
       "finished": false
     },
     {
