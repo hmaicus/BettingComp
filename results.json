@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T06:30:47.994Z",
+  "updatedAt": "2026-07-03T18:59:11.596Z",
   "count": 72,
   "results": [
     {
@@ -1231,10 +1231,10 @@
       "awayName": "Egypt",
       "homeTla": "AUS",
       "awayTla": "EGY",
-      "ah": null,
-      "aa": null,
+      "ah": 0,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Egy",
       "finished": false
     },
     {
