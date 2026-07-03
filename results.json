@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-02T21:57:49.050Z",
+  "updatedAt": "2026-07-03T02:46:34.118Z",
   "count": 72,
   "results": [
     {
@@ -1199,11 +1199,11 @@
       "awayName": "Croatia",
       "homeTla": "POR",
       "awayTla": "CRO",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Por",
+      "finished": true
     },
     {
       "fdId": 537429,
