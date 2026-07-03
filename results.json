@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T02:46:34.118Z",
+  "updatedAt": "2026-07-03T06:30:47.994Z",
   "count": 72,
   "results": [
     {
@@ -1215,11 +1215,11 @@
       "awayName": "Algeria",
       "homeTla": "SUI",
       "awayTla": "ALG",
-      "ah": null,
-      "aa": null,
+      "ah": 2,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Swi",
+      "finished": true
     },
     {
       "fdId": 537428,
