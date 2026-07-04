@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-03T23:55:10.875Z",
+  "updatedAt": "2026-07-04T02:42:31.629Z",
   "count": 72,
   "results": [
     {
@@ -1247,11 +1247,11 @@
       "awayName": "Cape Verde Islands",
       "homeTla": "ARG",
       "awayTla": "CPV",
-      "ah": 1,
-      "aa": 1,
-      "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "ah": 3,
+      "aa": 2,
+      "duration": "EXTRA_TIME",
+      "winner": "Arg",
+      "finished": true
     },
     {
       "fdId": 537430,
@@ -1263,10 +1263,10 @@
       "awayName": "Ghana",
       "homeTla": "COL",
       "awayTla": "GHA",
-      "ah": null,
-      "aa": null,
+      "ah": 1,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Col",
       "finished": false
     },
     {
