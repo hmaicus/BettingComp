@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-04T06:17:19.460Z",
+  "updatedAt": "2026-07-04T18:53:39.184Z",
   "count": 72,
   "results": [
     {
@@ -1279,10 +1279,10 @@
       "awayName": "Morocco",
       "homeTla": "CAN",
       "awayTla": "MAR",
-      "ah": null,
-      "aa": null,
+      "ah": 0,
+      "aa": 2,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Mor",
       "finished": false
     },
     {
