@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-04T22:45:12.655Z",
+  "updatedAt": "2026-07-04T23:52:00.151Z",
   "count": 72,
   "results": [
     {
@@ -1299,7 +1299,7 @@
       "aa": 1,
       "duration": "REGULAR",
       "winner": "Fra",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537377,
