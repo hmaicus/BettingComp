@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-04T18:53:39.184Z",
+  "updatedAt": "2026-07-04T20:03:52.154Z",
   "count": 72,
   "results": [
     {
@@ -1280,10 +1280,10 @@
       "homeTla": "CAN",
       "awayTla": "MAR",
       "ah": 0,
-      "aa": 2,
+      "aa": 3,
       "duration": "REGULAR",
       "winner": "Mor",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537375,
