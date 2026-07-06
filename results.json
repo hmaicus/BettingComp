@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-06T03:20:16.755Z",
+  "updatedAt": "2026-07-06T08:17:58.131Z",
   "count": 72,
   "results": [
     {
@@ -1433,12 +1433,12 @@
       "fdId": 537385,
       "stage": "QUARTER_FINALS",
       "date": "2026-07-11T21:00:00Z",
-      "home": null,
-      "away": null,
-      "homeName": null,
-      "awayName": null,
-      "homeTla": null,
-      "awayTla": null,
+      "home": "Nor",
+      "away": "Eng",
+      "homeName": "Norway",
+      "awayName": "England",
+      "homeTla": "NOR",
+      "awayTla": "ENG",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
