@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-06T19:38:16.733Z",
+  "updatedAt": "2026-07-06T21:19:27.822Z",
   "count": 72,
   "results": [
     {
@@ -1344,10 +1344,10 @@
       "homeTla": "POR",
       "awayTla": "ESP",
       "ah": 0,
-      "aa": 0,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Spa",
+      "finished": true
     },
     {
       "fdId": 537380,
