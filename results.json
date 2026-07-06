@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-06T08:17:58.131Z",
+  "updatedAt": "2026-07-06T19:38:16.733Z",
   "count": 72,
   "results": [
     {
@@ -1343,8 +1343,8 @@
       "awayName": "Spain",
       "homeTla": "POR",
       "awayTla": "ESP",
-      "ah": null,
-      "aa": null,
+      "ah": 0,
+      "aa": 0,
       "duration": "REGULAR",
       "winner": null,
       "finished": false
