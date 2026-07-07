@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-07T21:13:17.343Z",
+  "updatedAt": "2026-07-07T22:50:04.921Z",
   "count": 72,
   "results": [
     {
@@ -1391,11 +1391,11 @@
       "awayName": "Colombia",
       "homeTla": "SUI",
       "awayTla": "COL",
-      "ah": 0,
-      "aa": 0,
-      "duration": "REGULAR",
+      "ah": 1,
+      "aa": 1,
+      "duration": "PENALTY_SHOOTOUT",
       "winner": null,
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537383,
