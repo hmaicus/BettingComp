@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-07T22:50:04.921Z",
+  "updatedAt": "2026-07-07T23:44:31.641Z",
   "count": 72,
   "results": [
     {
@@ -1391,8 +1391,8 @@
       "awayName": "Colombia",
       "homeTla": "SUI",
       "awayTla": "COL",
-      "ah": 1,
-      "aa": 1,
+      "ah": 4,
+      "aa": 3,
       "duration": "PENALTY_SHOOTOUT",
       "winner": null,
       "finished": true
