@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-06T21:19:27.822Z",
+  "updatedAt": "2026-07-07T02:53:46.402Z",
   "count": 72,
   "results": [
     {
@@ -1359,11 +1359,11 @@
       "awayName": "Belgium",
       "homeTla": "USA",
       "awayTla": "BEL",
-      "ah": null,
-      "aa": null,
+      "ah": 1,
+      "aa": 4,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Bel",
+      "finished": true
     },
     {
       "fdId": 537381,
