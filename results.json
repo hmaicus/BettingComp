@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-07T23:44:31.641Z",
+  "updatedAt": "2026-07-08T08:24:31.252Z",
   "count": 72,
   "results": [
     {
@@ -1394,7 +1394,7 @@
       "ah": 4,
       "aa": 3,
       "duration": "PENALTY_SHOOTOUT",
-      "winner": null,
+      "winner": "Swi",
       "finished": true
     },
     {
@@ -1449,12 +1449,12 @@
       "fdId": 537386,
       "stage": "QUARTER_FINALS",
       "date": "2026-07-12T01:00:00Z",
-      "home": null,
-      "away": null,
-      "homeName": null,
-      "awayName": null,
-      "homeTla": null,
-      "awayTla": null,
+      "home": "Arg",
+      "away": "Swi",
+      "homeName": "Argentina",
+      "awayName": "Switzerland",
+      "homeTla": "ARG",
+      "awayTla": "SUI",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
