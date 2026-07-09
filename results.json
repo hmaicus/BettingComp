@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-09T21:10:55.437Z",
+  "updatedAt": "2026-07-09T23:01:07.345Z",
   "count": 72,
   "results": [
     {
@@ -1407,11 +1407,11 @@
       "awayName": "Morocco",
       "homeTla": "FRA",
       "awayTla": "MAR",
-      "ah": 0,
+      "ah": 2,
       "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Fra",
+      "finished": true
     },
     {
       "fdId": 537384,
