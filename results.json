@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-09T23:01:07.345Z",
+  "updatedAt": "2026-07-10T06:43:17.294Z",
   "count": 72,
   "results": [
     {
@@ -1465,11 +1465,11 @@
       "fdId": 537387,
       "stage": "SEMI_FINALS",
       "date": "2026-07-14T19:00:00Z",
-      "home": null,
+      "home": "Fra",
       "away": null,
-      "homeName": null,
+      "homeName": "France",
       "awayName": null,
-      "homeTla": null,
+      "homeTla": "FRA",
       "awayTla": null,
       "ah": null,
       "aa": null,
