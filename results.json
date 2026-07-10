@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-10T19:13:40.146Z",
+  "updatedAt": "2026-07-10T20:58:24.520Z",
   "count": 72,
   "results": [
     {
@@ -1423,10 +1423,10 @@
       "awayName": "Belgium",
       "homeTla": "ESP",
       "awayTla": "BEL",
-      "ah": 0,
-      "aa": 0,
+      "ah": 2,
+      "aa": 1,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Spa",
       "finished": false
     },
     {
