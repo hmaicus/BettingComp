@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-10T20:58:24.520Z",
+  "updatedAt": "2026-07-10T21:59:40.058Z",
   "count": 72,
   "results": [
     {
@@ -1427,7 +1427,7 @@
       "aa": 1,
       "duration": "REGULAR",
       "winner": "Spa",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537385,
