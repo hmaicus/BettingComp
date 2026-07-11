@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-11T22:35:50.050Z",
+  "updatedAt": "2026-07-11T23:41:47.251Z",
   "count": 72,
   "results": [
     {
@@ -1439,10 +1439,10 @@
       "awayName": "England",
       "homeTla": "NOR",
       "awayTla": "ENG",
-      "ah": 2,
-      "aa": 1,
-      "duration": "REGULAR",
-      "winner": "Nor",
+      "ah": 1,
+      "aa": 2,
+      "duration": "EXTRA_TIME",
+      "winner": "Eng",
       "finished": false
     },
     {
