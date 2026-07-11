@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-10T21:59:40.058Z",
+  "updatedAt": "2026-07-11T07:51:53.891Z",
   "count": 72,
   "results": [
     {
@@ -1466,11 +1466,11 @@
       "stage": "SEMI_FINALS",
       "date": "2026-07-14T19:00:00Z",
       "home": "Fra",
-      "away": null,
+      "away": "Spa",
       "homeName": "France",
-      "awayName": null,
+      "awayName": "Spain",
       "homeTla": "FRA",
-      "awayTla": null,
+      "awayTla": "ESP",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
