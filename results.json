@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-11T23:41:47.251Z",
+  "updatedAt": "2026-07-12T02:33:47.670Z",
   "count": 72,
   "results": [
     {
@@ -1443,7 +1443,7 @@
       "aa": 2,
       "duration": "EXTRA_TIME",
       "winner": "Eng",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537386,
@@ -1455,10 +1455,10 @@
       "awayName": "Switzerland",
       "homeTla": "ARG",
       "awayTla": "SUI",
-      "ah": null,
-      "aa": null,
+      "ah": 1,
+      "aa": 0,
       "duration": "REGULAR",
-      "winner": null,
+      "winner": "Arg",
       "finished": false
     },
     {
