@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-12T05:56:05.997Z",
+  "updatedAt": "2026-07-12T08:17:13.964Z",
   "count": 72,
   "results": [
     {
@@ -1331,7 +1331,7 @@
       "aa": 3,
       "duration": "REGULAR",
       "winner": "Eng",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537379,
@@ -1481,12 +1481,12 @@
       "fdId": 537388,
       "stage": "SEMI_FINALS",
       "date": "2026-07-15T19:00:00Z",
-      "home": null,
-      "away": null,
-      "homeName": null,
-      "awayName": null,
-      "homeTla": null,
-      "awayTla": null,
+      "home": "Eng",
+      "away": "Arg",
+      "homeName": "England",
+      "awayName": "Argentina",
+      "homeTla": "ENG",
+      "awayTla": "ARG",
       "ah": null,
       "aa": null,
       "duration": "REGULAR",
