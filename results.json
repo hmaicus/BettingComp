@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-15T20:00:48.060Z",
+  "updatedAt": "2026-07-15T21:45:29.565Z",
   "count": 72,
   "results": [
     {
@@ -1487,11 +1487,11 @@
       "awayName": "Argentina",
       "homeTla": "ENG",
       "awayTla": "ARG",
-      "ah": 0,
-      "aa": 0,
+      "ah": 1,
+      "aa": 2,
       "duration": "REGULAR",
-      "winner": null,
-      "finished": false
+      "winner": "Arg",
+      "finished": true
     },
     {
       "fdId": 537389,
