@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-18T22:37:05.960Z",
+  "updatedAt": "2026-07-18T23:41:06.114Z",
   "count": 72,
   "results": [
     {
@@ -1503,11 +1503,11 @@
       "awayName": "England",
       "homeTla": "FRA",
       "awayTla": "ENG",
-      "ah": 3,
-      "aa": 4,
+      "ah": 4,
+      "aa": 6,
       "duration": "REGULAR",
       "winner": "Eng",
-      "finished": false
+      "finished": true
     },
     {
       "fdId": 537390,
