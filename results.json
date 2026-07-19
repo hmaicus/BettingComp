@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-18T23:41:06.114Z",
+  "updatedAt": "2026-07-19T20:00:49.883Z",
   "count": 72,
   "results": [
     {
@@ -1519,8 +1519,8 @@
       "awayName": "Argentina",
       "homeTla": "ESP",
       "awayTla": "ARG",
-      "ah": null,
-      "aa": null,
+      "ah": 0,
+      "aa": 0,
       "duration": "REGULAR",
       "winner": null,
       "finished": false
