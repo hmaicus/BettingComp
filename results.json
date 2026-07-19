@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-19T21:39:58.583Z",
+  "updatedAt": "2026-07-19T22:39:50.106Z",
   "count": 72,
   "results": [
     {
@@ -1519,11 +1519,11 @@
       "awayName": "Argentina",
       "homeTla": "ESP",
       "awayTla": "ARG",
-      "ah": 0,
+      "ah": 1,
       "aa": 0,
       "duration": "EXTRA_TIME",
-      "winner": null,
-      "finished": false
+      "winner": "Spa",
+      "finished": true
     }
   ],
   "standings": [
