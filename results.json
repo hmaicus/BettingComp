@@ -1,6 +1,6 @@
 {
   "competition": "WC",
-  "updatedAt": "2026-07-19T20:00:49.883Z",
+  "updatedAt": "2026-07-19T21:39:58.583Z",
   "count": 72,
   "results": [
     {
@@ -1521,7 +1521,7 @@
       "awayTla": "ARG",
       "ah": 0,
       "aa": 0,
-      "duration": "REGULAR",
+      "duration": "EXTRA_TIME",
       "winner": null,
       "finished": false
     }
